@@ -55,14 +55,15 @@ func main() {
 		case "help":
 			reply.Text = "I understand /sayhi and /status."
 		case "funding":
-			controller.Funding(bot, update.Message.Chat.ID)
+			reply.Text = controller.Funding(update.Message.Chat.ID)
 		case "newfunding":
-			controller.NewFunding(bot, update.Message.Chat.ID, update.Message.Text)
+			reply.Text = controller.NewFunding(update.Message.Chat.ID, update.Message.Text)
 		default:
 			reply.Text = "I don't know that command"
-			if _, err := bot.Send(reply); err != nil {
-				fmt.Println(err)
-			}
+		}
+
+		if _, err := bot.Send(reply); err != nil {
+			fmt.Println(err)
 		}
 	}
 }

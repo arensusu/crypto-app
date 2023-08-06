@@ -11,27 +11,9 @@ type WatchList struct {
 	coinglass.Pair
 }
 
-func Contains(curList []coinglass.Pair, target coinglass.Pair) bool {
-	for _, pair := range curList {
-		if pair == target {
-			return true
-		}
-	}
-	return false
-}
-
-func AddFundingWatchList(chatID int64, exchange, symbol string) error {
-	pairs, err := GetFundingWatchList(chatID)
-	if err != nil {
-		return err
-	}
-	pair := coinglass.Pair{Exchange: exchange, Symbol: symbol}
-	if Contains(pairs, pair) {
-		return nil
-	}
-
+func AddFundingWatchList(chatID int64, pair coinglass.Pair) error {
 	newWatchlist := WatchList{ChatID: chatID, Pair: pair}
-	err = database.DB.Create(&newWatchlist).Error
+	err := database.DB.Create(&newWatchlist).Error
 	return err
 }
 
