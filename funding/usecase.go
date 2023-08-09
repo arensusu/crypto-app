@@ -1,14 +1,22 @@
-package controller
+package funding
 
 import (
 	"fmt"
 	"funding-rate/coinglass"
-	"funding-rate/model"
+	"funding-rate/domain"
 	"strings"
 )
 
-func Funding(chatID int64) string {
-	pairs, err := model.GetFundingWatchList(chatID)
+type FundingUseCase struct {
+	fundingRepo domain.IFundingRepository
+}
+
+func NewFundingUseCase(repo domain.IFundingRepository) domain.IFundingUseCase {
+	return &FundingUseCase{repo}
+}
+
+func (usecase *FundingUseCase) Funding(chatID int64) string {
+	pairs, err := usecase.fundingRepo.GetFundingWatchList(chatID)
 	if err != nil {
 		fmt.Println(err)
 		return "Cannot get data of following pairs."
@@ -30,7 +38,7 @@ func Funding(chatID int64) string {
 	return reply
 }
 
-func NewFunding(chatID int64, message string) string {
+func (usecase *FundingUseCase) NewFunding(chatID int64, message string) string {
 	msg := strings.Split(message, " ")
 
 	if len(msg) < 3 {
@@ -39,7 +47,7 @@ func NewFunding(chatID int64, message string) string {
 	}
 
 	pair := coinglass.Pair{Exchange: msg[1], Symbol: msg[2]}
-	isExist, err := isPairExist(pair)
+	isExist, err := pair.IsExist()
 	if err != nil {
 		return "Cannot get data from Coinglass."
 
@@ -49,7 +57,7 @@ func NewFunding(chatID int64, message string) string {
 
 	}
 
-	isFollowing, err := isPairFollowing(chatID, pair)
+	isFollowing, err := usecase.isPairFollowing(chatID, pair)
 	if err != nil {
 		return "Cannot get data of following pairs."
 
@@ -59,21 +67,13 @@ func NewFunding(chatID int64, message string) string {
 
 	}
 
-	if err := model.AddFundingWatchList(chatID, pair); err != nil {
+	if err := usecase.fundingRepo.AddFundingWatchList(chatID, pair); err != nil {
 		fmt.Println(err)
 		return "Added Failed."
 
 	}
 	return "Added Successfully."
 
-}
-
-func isPairExist(pair coinglass.Pair) (bool, error) {
-	response, err := pair.GetFundingRate("h8", 1)
-	if err != nil {
-		return false, err
-	}
-	return response.Msg != "pair unknown", nil
 }
 
 func contains(curList []coinglass.Pair, target coinglass.Pair) bool {
@@ -85,8 +85,8 @@ func contains(curList []coinglass.Pair, target coinglass.Pair) bool {
 	return false
 }
 
-func isPairFollowing(chatID int64, pair coinglass.Pair) (bool, error) {
-	pairs, err := model.GetFundingWatchList(chatID)
+func (usecase *FundingUseCase) isPairFollowing(chatID int64, pair coinglass.Pair) (bool, error) {
+	pairs, err := usecase.fundingRepo.GetFundingWatchList(chatID)
 	if err != nil {
 		return false, err
 	}

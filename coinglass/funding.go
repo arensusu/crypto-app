@@ -79,3 +79,11 @@ func totalFundingRate(data []FundingRateData, period int) float64 {
 	}
 	return total
 }
+
+func (pair Pair) IsExist() (bool, error) {
+	response, err := pair.GetFundingRate("h8", 1)
+	if err != nil {
+		return false, err
+	}
+	return response.Msg != "pair unknown", nil
+}

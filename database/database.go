@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"funding-rate/domain"
 	"os"
 
 	"gorm.io/driver/postgres"
@@ -17,16 +18,19 @@ var (
 	sslmode  = "disable"
 )
 
-var (
-	DB *gorm.DB
-)
+func LoadDatabase() *gorm.DB {
+	db := Connect()
+	db.AutoMigrate(&domain.User{})
+	db.AutoMigrate(&domain.WatchList{})
+	return db
+}
 
-func Connect() {
+func Connect() *gorm.DB {
 	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s TimeZone=Asia/Taipei",
 		hostname, port, user, password, dbname, sslmode)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}
-	DB = db
+	return db
 }
