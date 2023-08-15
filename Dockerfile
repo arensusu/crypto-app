@@ -4,6 +4,6 @@ WORKDIR /crypto-tgbot
 
 COPY . .
 
-RUN go build
+RUN go build -o crypto-tgbot cmd/main.go
 
-CMD ["./funding-rate"]
+CMD ["./crypto-tgbot"]

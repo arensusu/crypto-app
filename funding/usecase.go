@@ -70,37 +70,30 @@ func (usecase *FundingUseCase) NewFunding(chatID int64, message string) string {
 
 	if len(msg) < 3 {
 		return "Invalid."
-
 	}
 
 	pair := coinglass.Pair{Exchange: msg[1], Symbol: msg[2]}
 	history, err := usecase.fundingRepo.GetFundingHistory(pair)
 	if err != nil {
 		return "Cannot get data from Coinglass."
-
 	}
 	if len(history) == 0 {
 		return "Pair is not exist."
-
 	}
 
 	isFollowing, err := usecase.isPairFollowing(chatID, pair)
 	if err != nil {
 		return "Cannot get data of following pairs."
-
 	}
 	if isFollowing {
 		return "Already following."
-
 	}
 
 	if err := usecase.fundingRepo.AddFundingWatchList(chatID, pair); err != nil {
 		fmt.Println(err)
 		return "Added Failed."
-
 	}
 	return "Added Successfully."
-
 }
 
 func contains(curList []coinglass.Pair, target coinglass.Pair) bool {
