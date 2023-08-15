@@ -27,15 +27,42 @@ func (usecase *FundingUseCase) Funding(chatID int64) string {
 
 	reply := "Funding Rate\n"
 	for _, pair := range pairs {
-		fundingRates, err := pair.GetFundingRate("h8", 100)
+		history, err := usecase.fundingRepo.GetFundingHistory(pair)
 		if err != nil {
 			reply += fmt.Sprintf("\nCannot obtain data of %s %s", pair.Exchange, pair.Symbol)
 			fmt.Println(err)
 			continue
 		}
-		reply += pair.ToMessage(&fundingRates)
+		reply += toMessage(pair, history)
 	}
 	return reply
+}
+
+func toMessage(pair coinglass.Pair, history []float64) string {
+	length := len(history)
+	msg := fmt.Sprintf("\n%s %s\n", pair.Exchange, pair.Symbol)
+
+	if length >= 100 {
+		total := totalFundingRate(history, 100)
+		msg += fmt.Sprintf("Total of last 100: %.4f%%, APR: %.2f%%\n", total, total/100*3*365)
+	}
+
+	if length >= 30 {
+		total := totalFundingRate(history, 30)
+		msg += fmt.Sprintf("Total of last 30:  %.4f%%, APR: %.2f%%\n", total, total/30*3*365)
+	}
+
+	msg += fmt.Sprintf("Last: %.4f%%\n", history[length-1])
+
+	return msg
+}
+
+func totalFundingRate(data []float64, period int) float64 {
+	total := 0.0
+	for _, fundingRate := range data[len(data)-period:] {
+		total += fundingRate
+	}
+	return total
 }
 
 func (usecase *FundingUseCase) NewFunding(chatID int64, message string) string {
@@ -47,12 +74,12 @@ func (usecase *FundingUseCase) NewFunding(chatID int64, message string) string {
 	}
 
 	pair := coinglass.Pair{Exchange: msg[1], Symbol: msg[2]}
-	isExist, err := pair.IsExist()
+	history, err := usecase.fundingRepo.GetFundingHistory(pair)
 	if err != nil {
 		return "Cannot get data from Coinglass."
 
 	}
-	if !isExist {
+	if len(history) == 0 {
 		return "Pair is not exist."
 
 	}

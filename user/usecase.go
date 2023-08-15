@@ -34,14 +34,13 @@ func (usecase *UserUseCase) GetUsersNotification() []domain.Notification {
 		}
 
 		for _, pair := range watchlist {
-			res, err := pair.GetFundingRate("h8", 3)
+			history, err := usecase.fundingRepo.GetFundingHistory(pair)
 			if err != nil {
 				notifications = append(notifications, domain.Notification{ChatID: user.ChatID, Message: "Cannot get data from coinglass.\n"})
 				continue
 			}
 
-			data := res.Data
-			rate := data[len(data)-1].Rate
+			rate := history[len(history)-1]
 			if rate < 0.0 {
 				notifications = append(notifications, domain.Notification{ChatID: user.ChatID, Message: fmt.Sprintf("Alert: current funding rate of %s %s is %.4f\n", pair.Exchange, pair.Symbol, rate)})
 			}

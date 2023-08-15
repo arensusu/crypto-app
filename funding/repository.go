@@ -8,11 +8,12 @@ import (
 )
 
 type PostgresFundingRepository struct {
-	db *gorm.DB
+	db  *gorm.DB
+	api *coinglass.CoinglassApi
 }
 
-func NewPostgresFundingRepository(db *gorm.DB) domain.IFundingRepository {
-	return &PostgresFundingRepository{db}
+func NewPostgresFundingRepository(db *gorm.DB, api *coinglass.CoinglassApi) domain.IFundingRepository {
+	return &PostgresFundingRepository{db, api}
 }
 
 func (repo *PostgresFundingRepository) AddFundingWatchList(chatID int64, pair coinglass.Pair) error {
@@ -29,4 +30,17 @@ func (repo *PostgresFundingRepository) GetFundingWatchList(chatID int64) ([]coin
 	}
 
 	return pairs, nil
+}
+
+func (repo *PostgresFundingRepository) GetFundingHistory(pair coinglass.Pair) ([]float64, error) {
+	response, err := repo.api.GetFundingRate(pair, "h8", 100)
+	if err != nil {
+		return []float64{}, err
+	}
+
+	history := []float64{}
+	for _, record := range response.Data {
+		history = append(history, record.Rate)
+	}
+	return history, nil
 }

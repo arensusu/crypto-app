@@ -16,4 +16,5 @@ type IFundingUseCase interface {
 type IFundingRepository interface {
 	AddFundingWatchList(chatID int64, pair coinglass.Pair) error
 	GetFundingWatchList(chatID int64) ([]coinglass.Pair, error)
+	GetFundingHistory(pair coinglass.Pair) ([]float64, error)
 }
