@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	NOTIFY_INTERVAL = 3600
+	NOTIFY_INTERVAL = 3600 * 8
 )
 
 var (
@@ -64,30 +64,40 @@ func (handler *telegramHandler) CommandReply(bot *tgbotapi.BotAPI) {
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
 
+	msgHistory := []string{}
 	updates := bot.GetUpdatesChan(u)
 	for update := range updates {
 		if update.Message == nil { // ignore any non-Message updates
 			continue
 		}
 
-		if !update.Message.IsCommand() { // ignore any non-command Messages
-			continue
-		}
-
-		// Create a new MessageConfig. We don't have text yet,
-		// so we leave it empty.
 		reply := tgbotapi.NewMessage(update.Message.Chat.ID, "")
-
 		// Extract the command from the Message.
-		switch update.Message.Command() {
+		command := update.Message.Command()
+		switch command {
 		case "start":
 			reply.Text = handler.UserUseCase.NewUser(update.Message.Chat.ID)
 		case "help":
 			reply.Text = "I understand /sayhi and /status."
+		case "show":
+			reply.Text = handler.FundingUseCase.ShowFundingWatchList(update.Message.Chat.ID)
+		case "remove":
+			msgHistory = append(msgHistory, "remove")
+			reply.Text = handler.FundingUseCase.ShowFundingWatchList(update.Message.Chat.ID)
+			reply.Text += "\nWhich trading pair do you want to remove? Please enter a index of pair.\n"
 		case "funding":
 			reply.Text = handler.FundingUseCase.Funding(update.Message.Chat.ID)
 		case "newfunding":
 			reply.Text = handler.FundingUseCase.NewFunding(update.Message.Chat.ID, update.Message.Text)
+		case "":
+			if len(msgHistory) == 0 {
+				continue
+			}
+			if msgHistory[0] == "remove" {
+				msgHistory = []string{}
+				reply.Text = handler.FundingUseCase.RemoveFromFundingWatchList(update.Message.Chat.ID, update.Message.Text)
+			}
+
 		default:
 			reply.Text = "I don't know that command"
 		}

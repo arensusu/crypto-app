@@ -37,6 +37,34 @@ func (_m *IFundingUseCase) NewFunding(chatID int64, message string) string {
 	return r0
 }
 
+// RemoveFromFundingWatchList provides a mock function with given fields: chatID, index
+func (_m *IFundingUseCase) RemoveFromFundingWatchList(chatID int64, index int) string {
+	ret := _m.Called(chatID, index)
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func(int64, int) string); ok {
+		r0 = rf(chatID, index)
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	return r0
+}
+
+// ShowFundingWatchList provides a mock function with given fields: chatID
+func (_m *IFundingUseCase) ShowFundingWatchList(chatID int64) string {
+	ret := _m.Called(chatID)
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func(int64) string); ok {
+		r0 = rf(chatID)
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	return r0
+}
+
 // NewIFundingUseCase creates a new instance of IFundingUseCase. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewIFundingUseCase(t interface {

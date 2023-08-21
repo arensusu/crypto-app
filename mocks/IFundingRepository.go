@@ -27,6 +27,20 @@ func (_m *IFundingRepository) AddFundingWatchList(chatID int64, pair coinglass.P
 	return r0
 }
 
+// DeleteFundingWatchList provides a mock function with given fields: chatID, pair
+func (_m *IFundingRepository) DeleteFundingWatchList(chatID int64, pair coinglass.Pair) error {
+	ret := _m.Called(chatID, pair)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(int64, coinglass.Pair) error); ok {
+		r0 = rf(chatID, pair)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // GetFundingHistory provides a mock function with given fields: pair
 func (_m *IFundingRepository) GetFundingHistory(pair coinglass.Pair) ([]float64, error) {
 	ret := _m.Called(pair)

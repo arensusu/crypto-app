@@ -44,3 +44,9 @@ func (repo *PostgresFundingRepository) GetFundingHistory(pair coinglass.Pair) ([
 	}
 	return history, nil
 }
+
+func (repo *PostgresFundingRepository) DeleteFundingWatchList(chatID int64, pair coinglass.Pair) error {
+	watchlist := domain.WatchList{}
+	err := repo.db.Where("chat_id = ? and exchange = ? and symbol = ?", chatID, pair.Exchange, pair.Symbol).Delete(&watchlist).Error
+	return err
+}

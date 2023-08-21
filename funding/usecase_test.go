@@ -43,3 +43,27 @@ func Test_NewFunding(t *testing.T) {
 
 	assert.Equal(t, "Added Successfully.", result)
 }
+
+func Test_ShowFunding(t *testing.T) {
+	pairs := []coinglass.Pair{{Exchange: "Bybit", Symbol: "ETHUSDT"}}
+	mockRepo := mocks.NewIFundingRepository(t)
+	mockRepo.On("GetFundingWatchList", int64(1)).Return(pairs, nil)
+	fundingUseCase := NewFundingUseCase(mockRepo)
+
+	result := fundingUseCase.ShowFundingWatchList(1)
+
+	expectResult := "Watchlist of funding rate:\n1. Bybit ETHUSDT\n"
+	assert.Equal(t, expectResult, result)
+}
+
+func Test_DeleteFunding(t *testing.T) {
+	pairs := []coinglass.Pair{{Exchange: "Bybit", Symbol: "ETHUSDT"}}
+	mockRepo := mocks.NewIFundingRepository(t)
+	mockRepo.On("GetFundingWatchList", int64(1)).Return(pairs, nil)
+	mockRepo.On("DeleteFundingWatchList", int64(1), pairs[0]).Return(nil)
+	fundingUseCase := NewFundingUseCase(mockRepo)
+
+	result := fundingUseCase.RemoveFromFundingWatchList(1, "1")
+
+	assert.Equal(t, "Remove Bybit ETHUSDT from watchlist successfully.", result)
+}

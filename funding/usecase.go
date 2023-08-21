@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"funding-rate/coinglass"
 	"funding-rate/domain"
+	"strconv"
 	"strings"
 )
 
@@ -111,4 +112,44 @@ func (usecase *FundingUseCase) isPairFollowing(chatID int64, pair coinglass.Pair
 		return false, err
 	}
 	return contains(pairs, pair), nil
+}
+
+func (usecase *FundingUseCase) ShowFundingWatchList(chatID int64) string {
+	pairs, err := usecase.fundingRepo.GetFundingWatchList(chatID)
+	if err != nil {
+		fmt.Println(err)
+		return "Cannot get data of following pairs."
+	}
+	if len(pairs) == 0 {
+		return "You do not following any trading pair."
+	}
+
+	result := "Watchlist of funding rate:\n"
+	for i, pair := range pairs {
+		result += fmt.Sprintf("%d. %s %s\n", i+1, pair.Exchange, pair.Symbol)
+	}
+	return result
+}
+
+func (usecase *FundingUseCase) RemoveFromFundingWatchList(chatID int64, message string) string {
+	index, err := strconv.Atoi(message)
+	if err != nil {
+		return "Invalid message. Please Enter a valid index again."
+	}
+	pairs, err := usecase.fundingRepo.GetFundingWatchList(chatID)
+	if err != nil {
+		fmt.Println(err)
+		return "Cannot get data of following pairs."
+	}
+	if len(pairs) < index {
+		return "Invalid index. Please Enter a valid index again."
+	}
+
+	pair := pairs[index-1]
+	err = usecase.fundingRepo.DeleteFundingWatchList(chatID, pair)
+	if err != nil {
+		fmt.Println(err)
+		return "Cannot delete the following pair."
+	}
+	return fmt.Sprintf("Remove %s %s from watchlist successfully.", pair.Exchange, pair.Symbol)
 }
