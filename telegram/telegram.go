@@ -13,6 +13,7 @@ const (
 
 func (handler *telegramHandler) Run() {
 	handler.tgbot.Debug = debug
+	handler.setCommand()
 
 	go handler.notify()
 	handler.commandReply()
@@ -36,6 +37,24 @@ func (handler *telegramHandler) notify() {
 			handler.fundingNotify()
 		}
 		time.Sleep(1 * time.Second)
+	}
+}
+
+func (handler *telegramHandler) setCommand() {
+	deleteCommand := tgbotapi.NewDeleteMyCommands()
+	if _, err := handler.tgbot.Request(deleteCommand); err != nil {
+		panic(err)
+	}
+
+	cmds := []tgbotapi.BotCommand{
+		{Command: "showfunding", Description: "Show funding rate of watchlist."},
+		{Command: "remove", Description: "Remove a pair from watchlist."},
+		{Command: "getfunding", Description: "Get funding rate of specific pair."},
+		{Command: "add", Description: "Add a pair to watchlist."},
+	}
+	setCommand := tgbotapi.NewSetMyCommands(cmds...)
+	if _, err := handler.tgbot.Request(setCommand); err != nil {
+		panic(err)
 	}
 }
 
