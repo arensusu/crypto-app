@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"funding-rate/coinglass"
 	"funding-rate/domain"
-	"strconv"
-	"strings"
 )
 
 type FundingUseCase struct {
@@ -66,14 +64,9 @@ func totalFundingRate(data []float64, period int) float64 {
 	return total
 }
 
-func (usecase *FundingUseCase) NewFunding(chatID int64, message string) string {
-	msg := strings.Split(message, " ")
+func (usecase *FundingUseCase) NewFunding(chatID int64, exchange, symbol string) string {
 
-	if len(msg) < 3 {
-		return "Invalid."
-	}
-
-	pair := coinglass.Pair{Exchange: msg[1], Symbol: msg[2]}
+	pair := coinglass.Pair{Exchange: exchange, Symbol: symbol}
 	history, err := usecase.fundingRepo.GetFundingHistory(pair)
 	if err != nil {
 		return "Cannot get data from Coinglass."
@@ -131,11 +124,7 @@ func (usecase *FundingUseCase) ShowFundingWatchList(chatID int64) string {
 	return result
 }
 
-func (usecase *FundingUseCase) RemoveFromFundingWatchList(chatID int64, message string) string {
-	index, err := strconv.Atoi(message)
-	if err != nil {
-		return "Invalid message. Please Enter a valid index again."
-	}
+func (usecase *FundingUseCase) RemoveFromFundingWatchList(chatID int64, index int) string {
 	pairs, err := usecase.fundingRepo.GetFundingWatchList(chatID)
 	if err != nil {
 		fmt.Println(err)

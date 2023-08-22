@@ -22,8 +22,9 @@ func main() {
 	fundingUseCase := funding.NewFundingUseCase(fundingRepo)
 	userUseCase := user.NewUserUseCase(userRepo, fundingRepo)
 
-	telegramHandler := telegram.NewTelegramHandler(fundingUseCase, userUseCase)
+	tgbot := telegram.NewTelegramBot()
+	telegramHandler := telegram.NewTelegramHandler(tgbot, fundingUseCase, userUseCase)
 
-	telegramHandler.Start()
+	telegramHandler.Run()
 
 }

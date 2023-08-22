@@ -39,7 +39,7 @@ func Test_NewFunding(t *testing.T) {
 	mockRepo.On("AddFundingWatchList", int64(1), newPair).Return(nil)
 	fundingUseCase := NewFundingUseCase(mockRepo)
 
-	result := fundingUseCase.NewFunding(1, "/newfunding Binance BTCUSDT")
+	result := fundingUseCase.NewFunding(1, "Binance", "BTCUSDT")
 
 	assert.Equal(t, "Added Successfully.", result)
 }
@@ -63,7 +63,7 @@ func Test_DeleteFunding(t *testing.T) {
 	mockRepo.On("DeleteFundingWatchList", int64(1), pairs[0]).Return(nil)
 	fundingUseCase := NewFundingUseCase(mockRepo)
 
-	result := fundingUseCase.RemoveFromFundingWatchList(1, "1")
+	result := fundingUseCase.RemoveFromFundingWatchList(1, 1)
 
 	assert.Equal(t, "Remove Bybit ETHUSDT from watchlist successfully.", result)
 }

@@ -9,10 +9,10 @@ type WatchList struct {
 }
 
 type IFundingUseCase interface {
-	NewFunding(chatID int64, message string) string
+	NewFunding(chatID int64, exchange, symbol string) string
 	Funding(chatID int64) string
 	ShowFundingWatchList(chatID int64) string
-	RemoveFromFundingWatchList(chatID int64, message string) string
+	RemoveFromFundingWatchList(chatID int64, index int) string
 }
 
 type IFundingRepository interface {
