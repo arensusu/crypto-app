@@ -43,7 +43,7 @@ func (usecase *UserUseCase) GetUsersNotification() []domain.Notification {
 
 			prev := history[len(history)-2]
 			curr := history[len(history)-1]
-			if math.Abs(prev+curr) < math.Abs(prev) {
+			if math.Abs(prev+curr) < math.Abs(prev-curr) {
 				notifications = append(notifications, domain.Notification{ChatID: user.ChatID, Message: fmt.Sprintf("Alert: current funding rate of %s %s is flipped (%.4f to %.4f)\n", pair.Exchange, pair.Symbol, prev, curr)})
 			}
 		}
