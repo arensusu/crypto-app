@@ -1,30 +1,34 @@
 package user
 
 import (
+	"fmt"
 	"funding-rate/domain"
 
 	"gorm.io/gorm"
 )
 
-type PostgresUserRepository struct {
+type UserPostgresRepository struct {
 	db *gorm.DB
 }
 
-func NewPostgresUserRepository(db *gorm.DB) domain.IUserRepository {
-	return &PostgresUserRepository{db}
+func NewUserPostgresRepository(db *gorm.DB) domain.UserRepository {
+	return &UserPostgresRepository{db}
 }
 
-func (repo *PostgresUserRepository) AddUser(chatID int64) error {
+func (repo *UserPostgresRepository) CreateUser(chatID int64) error {
 	user := domain.User{ChatID: chatID}
 	err := repo.db.Create(&user).Error
-	return err
+	if err != nil {
+		return fmt.Errorf("create user failed: %w", err)
+	}
+	return nil
 }
 
-func (repo *PostgresUserRepository) RetrieveUsers() ([]domain.User, error) {
+func (repo *UserPostgresRepository) RetrieveUsers() ([]domain.User, error) {
 	var users []domain.User
 	err := repo.db.Find(&users).Error
 	if err != nil {
-		return []domain.User{}, err
+		return []domain.User{}, fmt.Errorf("get user failed: %w", err)
 	}
 	return users, nil
 }

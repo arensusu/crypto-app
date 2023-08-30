@@ -21,7 +21,10 @@ var (
 func LoadDatabase() *gorm.DB {
 	db := Connect()
 	db.AutoMigrate(&domain.User{})
-	db.AutoMigrate(&domain.WatchList{})
+	db.AutoMigrate(&domain.Watchlist{})
+	db.AutoMigrate(&domain.PerpetualWatchlist{})
+	db.AutoMigrate(&domain.FundingSearched{})
+	db.AutoMigrate(&domain.PrevPrice{})
 	return db
 }
 

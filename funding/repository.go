@@ -1,52 +1,69 @@
 package funding
 
 import (
+	"errors"
+	"fmt"
 	"funding-rate/coinglass"
 	"funding-rate/domain"
 
 	"gorm.io/gorm"
 )
 
-type PostgresFundingRepository struct {
+type FundingPostgresRepository struct {
 	db  *gorm.DB
 	api *coinglass.CoinglassApi
 }
 
-func NewPostgresFundingRepository(db *gorm.DB, api *coinglass.CoinglassApi) domain.IFundingRepository {
-	return &PostgresFundingRepository{db, api}
+func NewFundingPostgresRepository(db *gorm.DB, api *coinglass.CoinglassApi) domain.FundingRepository {
+	return &FundingPostgresRepository{db, api}
 }
 
-func (repo *PostgresFundingRepository) AddFundingWatchList(chatID int64, pair coinglass.Pair) error {
-	newWatchlist := domain.WatchList{ChatID: chatID, Pair: pair}
-	err := repo.db.Create(&newWatchlist).Error
-	return err
-}
-
-func (repo *PostgresFundingRepository) GetFundingWatchList(chatID int64) ([]coinglass.Pair, error) {
-	var pairs []coinglass.Pair
-	err := repo.db.Model(&domain.WatchList{}).Where("chat_id=?", chatID).Find(&pairs).Error
-	if err != nil {
-		return []coinglass.Pair{}, err
-	}
-
-	return pairs, nil
-}
-
-func (repo *PostgresFundingRepository) GetFundingHistory(pair coinglass.Pair) ([]float64, error) {
-	response, err := repo.api.GetFundingRate(pair, "h8", 100)
+func (repo *FundingPostgresRepository) GetFundingHistory(exchange, symbol string) ([]float64, error) {
+	responseData, err := repo.api.GetFundingRateUSDHistory(symbol, "h8")
 	if err != nil {
 		return []float64{}, err
 	}
 
-	history := []float64{}
-	for _, record := range response.Data {
-		history = append(history, record.Rate)
+	dataList, isExist := responseData.DataMap[exchange]
+	if !isExist {
+		return []float64{}, errors.New("exchange is not exist")
 	}
-	return history, nil
+
+	return dataList, nil
 }
 
-func (repo *PostgresFundingRepository) DeleteFundingWatchList(chatID int64, pair coinglass.Pair) error {
-	watchlist := domain.WatchList{}
-	err := repo.db.Where("chat_id = ? and exchange = ? and symbol = ?", chatID, pair.Exchange, pair.Symbol).Delete(&watchlist).Error
-	return err
+func (repo *FundingPostgresRepository) GetPerpetualMarket(exchange, symbol string) (coinglass.PerpetualMarket, error) {
+	responseData, err := repo.api.GetPerpetualMarket(symbol)
+	if err != nil {
+		return coinglass.PerpetualMarket{}, err
+	}
+
+	for _, data := range responseData {
+		if data.ExchangeName == exchange {
+			return data, nil
+		}
+	}
+	return coinglass.PerpetualMarket{}, errors.New("exchange is not exist")
+}
+
+func (repo *FundingPostgresRepository) CreateFundingSearched(chatID int64, pair domain.Pair) error {
+	searched := domain.FundingSearched{
+		ChatID: chatID,
+		Pair:   pair,
+	}
+	err := repo.db.Create(&searched).Error
+	if err != nil {
+		return fmt.Errorf("create data failed: %w", err)
+	}
+	return nil
+}
+
+func (repo *FundingPostgresRepository) RetrieveFundingSearched(chatID int64) ([]domain.Pair, error) {
+	var pairs []domain.Pair
+
+	err := repo.db.Model(&domain.FundingSearched{}).Where("chat_id=?", chatID).Find(&pairs).Error
+	if err != nil {
+		return []domain.Pair{}, err
+	}
+	return pairs, nil
 }

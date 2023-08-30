@@ -1,52 +1,29 @@
 package user
 
 import (
-	"fmt"
 	"funding-rate/domain"
-	"math"
 )
 
-type UserUseCase struct {
-	userRepo    domain.IUserRepository
-	fundingRepo domain.IFundingRepository
+type UserUsecase struct {
+	userRepo domain.UserRepository
 }
 
-func NewUserUseCase(userRepo domain.IUserRepository, fundingRepo domain.IFundingRepository) domain.IUserUseCase {
-	return &UserUseCase{userRepo, fundingRepo}
+func NewUserUsecase(userRepo domain.UserRepository) domain.UserUsecase {
+	return &UserUsecase{userRepo}
 }
 
-func (usecase *UserUseCase) NewUser(chatID int64) string {
-	err := usecase.userRepo.AddUser(chatID)
+func (usecase *UserUsecase) AddUser(chatID int64) error {
+	err := usecase.userRepo.CreateUser(chatID)
 	if err != nil {
-		return "Already register."
+		return err
 	}
-	return "Welcome."
+	return nil
 }
 
-func (usecase *UserUseCase) GetUsersNotification() []domain.Notification {
-	users, _ := usecase.userRepo.RetrieveUsers()
-
-	notifications := []domain.Notification{}
-	for _, user := range users {
-		watchlist, err := usecase.fundingRepo.GetFundingWatchList(user.ChatID)
-		if err != nil {
-			notifications = append(notifications, domain.Notification{ChatID: user.ChatID, Message: "Cannot get data of watchlist.\n"})
-			continue
-		}
-
-		for _, pair := range watchlist {
-			history, err := usecase.fundingRepo.GetFundingHistory(pair)
-			if err != nil {
-				notifications = append(notifications, domain.Notification{ChatID: user.ChatID, Message: "Cannot get data from coinglass.\n"})
-				continue
-			}
-
-			prev := history[len(history)-2]
-			curr := history[len(history)-1]
-			if math.Abs(prev+curr) < math.Abs(prev-curr) {
-				notifications = append(notifications, domain.Notification{ChatID: user.ChatID, Message: fmt.Sprintf("Alert: current funding rate of %s %s is flipped (%.4f to %.4f)\n", pair.Exchange, pair.Symbol, prev, curr)})
-			}
-		}
+func (usecase *UserUsecase) GetUsers() ([]domain.User, error) {
+	users, err := usecase.userRepo.RetrieveUsers()
+	if err != nil {
+		return []domain.User{}, err
 	}
-	return notifications
+	return users, nil
 }

@@ -1,7 +1,6 @@
 package telegram
 
 import (
-	"fmt"
 	"time"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -20,21 +19,14 @@ func (handler *telegramHandler) Run() {
 
 }
 
-func (handler *telegramHandler) fundingNotify() {
-	notifications := handler.UserUseCase.GetUsersNotification()
-	for _, notification := range notifications {
-		reply := tgbotapi.NewMessage(notification.ChatID, notification.Message)
-		if _, err := handler.tgbot.Send(reply); err != nil {
-			fmt.Println(err)
-		}
-	}
-}
-
 func (handler *telegramHandler) notify() {
 	for {
 		now := time.Now().Unix()
 		if now%NOTIFY_INTERVAL == 0 {
 			handler.fundingNotify()
+		}
+		if now%60 == 0 {
+			handler.priceAlert()
 		}
 		time.Sleep(1 * time.Second)
 	}
@@ -47,10 +39,11 @@ func (handler *telegramHandler) setCommand() {
 	}
 
 	cmds := []tgbotapi.BotCommand{
-		{Command: "showfunding", Description: "Show funding rate of watchlist."},
+		{Command: "funding", Description: "Show funding rate of watchlist."},
 		{Command: "remove", Description: "Remove a pair from watchlist."},
 		{Command: "getfunding", Description: "Get funding rate of specific pair."},
 		{Command: "add", Description: "Add a pair to watchlist."},
+		{Command: "show", Description: "Show the watchlist."},
 	}
 	setCommand := tgbotapi.NewSetMyCommands(cmds...)
 	if _, err := handler.tgbot.Request(setCommand); err != nil {
@@ -68,28 +61,32 @@ func (handler *telegramHandler) commandReply() {
 			continue
 		}
 
-		// Extract the command from the Message.
 		command := update.Message.Command()
 		chatID := update.Message.Chat.ID
 		text := update.Message.Text
+
+		msg := ""
 		switch command {
 		case "start":
-			handler.start(chatID)
-		case "showfunding":
-			handler.showfunding(chatID)
-		case "remove":
-			handler.preRemove(chatID)
-		case "getfunding":
-			handler.getFunding(chatID)
-		case "add":
-			handler.add(chatID, text)
-		case "":
-			if len(handler.msgHistory) == 0 {
-				continue
-			}
-			if handler.msgHistory[0] == "remove" {
-				handler.remove(chatID, text)
-			}
+			msg = handler.start(chatID)
+		case "funding":
+			msg = handler.funding(chatID, text)
+		case "perp":
+			msg = handler.perp(chatID, text)
+		case "addfunding":
+			msg = handler.addFunding(chatID, text)
+		case "addperp":
+			msg = handler.addPerp(chatID, text)
+		case "show":
+			msg = handler.show(chatID)
+		case "removefunding":
+			msg = handler.removeFunding(chatID, text)
+		case "removeperp":
+			msg = handler.removePerp(chatID, text)
+			// case "getfunding":
+			// 	msg = handler.getFunding(chatID, text)
 		}
+
+		handler.sendMsg(chatID, msg)
 	}
 }

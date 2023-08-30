@@ -8,6 +8,30 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func Test_GetFundingData(t *testing.T) {
+	watchlistRepo := mocks.NewWatchlistRepository(t)
+	fundingRepo := mocks.NewFundingRepository(t)
+	usecase := NewFundingUsecase(watchlistRepo, fundingRepo)
+
+	result, err := usecase.GetFundingData("Bybit", "BTC")
+}
+
+func Test_GetFundingDataOfUser(t *testing.T) {
+
+}
+
+func Test_GetFundingNotification(t *testing.T) {
+
+}
+
+func Test_GetLastFiveFundingSearched(t *testing.T) {
+
+}
+
+func Test_AddFundingSearched(t *testing.T) {
+
+}
+
 func Test_Funding(t *testing.T) {
 	pairs := []coinglass.Pair{{Exchange: "Bybit", Symbol: "ETHUSDT"}}
 	history := getFakeHistory(100)
