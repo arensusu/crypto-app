@@ -211,11 +211,11 @@ func (handler *telegramHandler) addPerp(chatID int64, text string) string {
 
 	perpData, err := handler.fundingUsecase.GetPerpData(watchlist.Exchange, watchlist.Symbol)
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 		return "Cannot get perpetual data."
 	}
 	if err := handler.watchlistUsecase.SetPerpPrevPrice(domain.PrevPrice{Pair: watchlist.Pair, Price: perpData.Price}); err != nil {
-		log.Fatal(err)
+		log.Print(err)
 		return "Cannot set perpetual price data."
 	}
 
@@ -225,7 +225,7 @@ func (handler *telegramHandler) addPerp(chatID int64, text string) string {
 func (handler *telegramHandler) fundingNotify() {
 	users, err := handler.userUsecase.GetUsers()
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 		return
 	}
 
@@ -245,30 +245,35 @@ func (handler *telegramHandler) fundingNotify() {
 func (handler *telegramHandler) priceAlert() {
 	watchlists, err := handler.watchlistUsecase.GetPerpetualWatchlists()
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 		return
 	}
 
+	updateList := map[domain.Pair]float64{}
 	for _, watchlist := range watchlists {
 		perpData, err := handler.fundingUsecase.GetPerpData(watchlist.Exchange, watchlist.Symbol)
 		if err != nil {
-			log.Fatal(err)
+			log.Print(err)
 			continue
 		}
 		prevPrice, err := handler.watchlistUsecase.GetPerpPrevPrice(watchlist.Pair)
 		if err != nil {
-			log.Fatal(err)
+			log.Print(err)
 			continue
 		}
+		updateList[watchlist.Pair] = perpData.Price
 
+		fmt.Println(perpData.Price)
 		if (prevPrice < watchlist.TargetPrice && perpData.Price > watchlist.TargetPrice) ||
 			(prevPrice > watchlist.TargetPrice && perpData.Price < watchlist.TargetPrice) {
 			msg := fmt.Sprintf("Alert: %s %s crossovers target price: %f", watchlist.Exchange, watchlist.Symbol, watchlist.TargetPrice)
 			handler.sendMsg(watchlist.ChatID, msg)
 		}
+	}
 
-		if err := handler.watchlistUsecase.SetPerpPrevPrice(domain.PrevPrice{Pair: watchlist.Pair, Price: perpData.Price}); err != nil {
-			log.Fatal(err)
+	for pair, price := range updateList {
+		if err := handler.watchlistUsecase.SetPerpPrevPrice(domain.PrevPrice{Pair: pair, Price: price}); err != nil {
+			log.Print(err)
 		}
 	}
 }

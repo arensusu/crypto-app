@@ -24,7 +24,7 @@ func ResponseWithJson(w http.ResponseWriter, status int, v any) {
 	w.WriteHeader(status)
 	err := json.NewEncoder(w).Encode(v)
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 	}
 }
 

@@ -2,6 +2,7 @@ package coinglass
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 )
@@ -31,6 +32,11 @@ func GetDataOfResponse(body []byte, data any) error {
 	if err := json.Unmarshal(body, &response); err != nil {
 		return err
 	}
+
+	if response.Code == "50001" {
+		return errors.New("over the maximum of api request")
+	}
+
 	dataJSON, err := json.Marshal(response.Data)
 	if err != nil {
 		return err
