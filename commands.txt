@@ -1,7 +1,5 @@
 funding: get the funding rate history of pair
 perp: get the perpetual data of pair
 show: show the watchlist of pair
-addfunding: add a pair into watchlist of funding rate. Bot will send message when funding rate flips
-addprice: add a pair into watchlist of price. Bot will send message when price touches your target price
-removefunding: remove a pair from watchlist of funding rate
-removeprice: remove a pair from watchlist of price
+add: add a pair into watchlist
+remove: remove a pair from watchlist
