@@ -1,10 +1,12 @@
 services:
   crypto-tgbot:
+    container_name: coinglass_bot_prod
     build: .
     restart: always
     depends_on:
       - database
   database:
+    container_name: coinglass_db_prod
     image: postgres
     restart: always
     environment:
