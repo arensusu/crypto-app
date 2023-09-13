@@ -96,40 +96,24 @@ func (handler *telegramHandler) commandReply() {
 
 	updates := handler.tgbot.GetUpdatesChan(u)
 	for update := range updates {
-		if update.Message == nil { // ignore any non-Message updates
-			continue
+		var chatID int64
+		if update.CallbackQuery != nil {
+			chatID = update.CallbackQuery.From.ID
+			words := strings.Split(update.CallbackData(), " ")
+			handler.msgHistory[chatID] = words
+		} else if update.Message != nil {
+			text := update.Message.Text
+			chatID = update.Message.Chat.ID
+
+			if update.Message.IsCommand() {
+				handler.msgHistory[chatID] = []string{text}
+			} else {
+				handler.msgHistory[chatID] = append(handler.msgHistory[chatID], text)
+			}
+
 		}
 
-		text := update.Message.Text
-		chatID := update.Message.Chat.ID
-
-		msg := ""
-		if _, exist := handler.msgHistory[chatID]; !exist {
-			handler.msgHistory[chatID] = []string{}
-		}
-		handler.msgHistory[chatID] = append(handler.msgHistory[chatID], text)
-		// switch command {
-		// case "start":
-		// 	msg = handler.start(chatID)
-		// case "funding":
-		// 	msg = handler.funding(chatID, text)
-		// case "perp":
-		// 	msg = handler.perp(chatID, text)
-		// // case "addfunding":
-		// // 	msg = handler.addFunding(chatID, text)
-		// // case "addprice":
-		// // 	msg = handler.addPerp(chatID, text)
-		// case "show":
-		// 	msg = handler.show(chatID)
-		// case "removefunding":
-		// 	msg = handler.removeFunding(chatID, text)
-		// case "removeprice":
-		// 	msg = handler.removePerp(chatID, text)
-		// //
-		// case "":
-		// }
-
-		msg = handler.commandStep(chatID)
+		msg := handler.commandStep(chatID)
 		handler.sendMsg(chatID, msg)
 		fmt.Println(handler.msgHistory[chatID])
 	}
@@ -142,7 +126,7 @@ func (handler *telegramHandler) commandStep(id int64) string {
 	}
 
 	switch history[0] {
-	case "start":
+	case "/start":
 		return handler.start(id)
 	case "/funding":
 		return handler.funding(id)

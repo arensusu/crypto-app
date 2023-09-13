@@ -61,7 +61,7 @@ func (repo *FundingPostgresRepository) CreateFundingSearched(chatID int64, pair 
 func (repo *FundingPostgresRepository) RetrieveFundingSearched(chatID int64) ([]domain.Pair, error) {
 	var pairs []domain.Pair
 
-	err := repo.db.Model(&domain.FundingSearched{}).Where("chat_id=?", chatID).Find(&pairs).Error
+	err := repo.db.Model(&domain.FundingSearched{}).Order("created_at desc").Where("chat_id=?", chatID).Limit(5).Find(&pairs).Error
 	if err != nil {
 		return []domain.Pair{}, err
 	}

@@ -71,9 +71,11 @@ func (handler *telegramHandler) priceAlert() {
 		updateList[watchlist.Pair] = perpData.Price
 
 		fmt.Println(perpData.Price)
-		if (prevPrice < watchlist.TargetPrice && perpData.Price > watchlist.TargetPrice) ||
-			(prevPrice > watchlist.TargetPrice && perpData.Price < watchlist.TargetPrice) {
-			msg := fmt.Sprintf("Alert: %s %s crossovers target price: %f", watchlist.Exchange, watchlist.Symbol, watchlist.TargetPrice)
+		if prevPrice < watchlist.TargetPrice && perpData.Price > watchlist.TargetPrice {
+			msg := fmt.Sprintf("Alert: %s %s is crossing UP %f", watchlist.Exchange, watchlist.Symbol, watchlist.TargetPrice)
+			handler.sendMsg(watchlist.ChatID, msg)
+		} else if prevPrice > watchlist.TargetPrice && perpData.Price < watchlist.TargetPrice {
+			msg := fmt.Sprintf("Alert: %s %s is crossing DOWN %f", watchlist.Exchange, watchlist.Symbol, watchlist.TargetPrice)
 			handler.sendMsg(watchlist.ChatID, msg)
 		}
 	}
