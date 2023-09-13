@@ -1,4 +1,4 @@
-package funding
+package pair
 
 import (
 	"fmt"
@@ -7,16 +7,16 @@ import (
 	"time"
 )
 
-type FundingUsecase struct {
+type PairUsecase struct {
 	watchlistRepo domain.WatchlistRepository
-	fundingRepo   domain.FundingRepository
+	fundingRepo   domain.PairRepository
 }
 
-func NewFundingUsecase(watchlistRepo domain.WatchlistRepository, fundingRepo domain.FundingRepository) domain.FundingUsecase {
-	return &FundingUsecase{watchlistRepo, fundingRepo}
+func NewPairUsecase(watchlistRepo domain.WatchlistRepository, fundingRepo domain.PairRepository) domain.PairUsecase {
+	return &PairUsecase{watchlistRepo, fundingRepo}
 }
 
-func (usecase *FundingUsecase) GetFundingData(exchange, symbol string) (domain.FundingData, error) {
+func (usecase *PairUsecase) GetFundingData(exchange, symbol string) (domain.FundingData, error) {
 	history, err := usecase.fundingRepo.GetFundingHistory(exchange, symbol)
 	if err != nil {
 		return domain.FundingData{}, fmt.Errorf("get data from coinglass failed: %w", err)
@@ -32,7 +32,7 @@ func (usecase *FundingUsecase) GetFundingData(exchange, symbol string) (domain.F
 	return data, nil
 }
 
-func (usecase *FundingUsecase) GetPerpData(exchange, symbol string) (domain.PerpData, error) {
+func (usecase *PairUsecase) GetPerpData(exchange, symbol string) (domain.PerpData, error) {
 	data, err := usecase.fundingRepo.GetPerpetualMarket(exchange, symbol)
 	if err != nil {
 		return domain.PerpData{}, fmt.Errorf("get data from coinglass failed: %w", err)
@@ -51,7 +51,7 @@ func (usecase *FundingUsecase) GetPerpData(exchange, symbol string) (domain.Perp
 	return perp, nil
 }
 
-func (usecase *FundingUsecase) GetFundingDataOfUser(chatID int64) ([]domain.FundingData, error) {
+func (usecase *PairUsecase) GetFundingDataOfUser(chatID int64) ([]domain.FundingData, error) {
 	pairs, err := usecase.watchlistRepo.RetrieveFundingWatchlists(chatID)
 	if err != nil {
 		return []domain.FundingData{}, fmt.Errorf("get data failed: %w", err)
@@ -68,7 +68,7 @@ func (usecase *FundingUsecase) GetFundingDataOfUser(chatID int64) ([]domain.Fund
 	return datas, nil
 }
 
-func (usecase *FundingUsecase) GetFundingNotification(chatID int64) ([]domain.FundingNotification, error) {
+func (usecase *PairUsecase) GetFundingNotification(chatID int64) ([]domain.FundingNotification, error) {
 	pairs, err := usecase.watchlistRepo.RetrieveFundingWatchlists(chatID)
 	if err != nil {
 		return []domain.FundingNotification{}, fmt.Errorf("get data failed: %w", err)
@@ -95,7 +95,7 @@ func (usecase *FundingUsecase) GetFundingNotification(chatID int64) ([]domain.Fu
 	return notifications, nil
 }
 
-func (usecase *FundingUsecase) AddFundingSearched(chatID int64, exchange, symbol string) error {
+func (usecase *PairUsecase) AddFundingSearched(chatID int64, exchange, symbol string) error {
 	pair := domain.Pair{Exchange: exchange, Symbol: symbol}
 	err := usecase.fundingRepo.CreateFundingSearched(chatID, pair)
 	if err != nil {
@@ -104,7 +104,7 @@ func (usecase *FundingUsecase) AddFundingSearched(chatID int64, exchange, symbol
 	return nil
 }
 
-func (usecase *FundingUsecase) GetLastFiveFundingSearched(chatID int64) ([]domain.Pair, error) {
+func (usecase *PairUsecase) GetLastFiveFundingSearched(chatID int64) ([]domain.Pair, error) {
 	searched, err := usecase.fundingRepo.RetrieveFundingSearched(chatID)
 	if err != nil {
 		return []domain.Pair{}, fmt.Errorf("get data failed: %w", err)

@@ -13,8 +13,8 @@ type WatchlistRepository struct {
 	mock.Mock
 }
 
-// CreateWatchlist provides a mock function with given fields: chatID, pair
-func (_m *WatchlistRepository) CreateWatchlist(chatID int64, pair domain.Pair) error {
+// CreateFundingWatchlist provides a mock function with given fields: chatID, pair
+func (_m *WatchlistRepository) CreateFundingWatchlist(chatID int64, pair domain.Pair) error {
 	ret := _m.Called(chatID, pair)
 
 	var r0 error
@@ -27,8 +27,36 @@ func (_m *WatchlistRepository) CreateWatchlist(chatID int64, pair domain.Pair) e
 	return r0
 }
 
-// DeleteWatchlist provides a mock function with given fields: chatID, pair
-func (_m *WatchlistRepository) DeleteWatchlist(chatID int64, pair domain.Pair) error {
+// CreatePerpPrevPrice provides a mock function with given fields: _a0
+func (_m *WatchlistRepository) CreatePerpPrevPrice(_a0 domain.PrevPrice) error {
+	ret := _m.Called(_a0)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(domain.PrevPrice) error); ok {
+		r0 = rf(_a0)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// CreatePerpetualWatchlist provides a mock function with given fields: _a0
+func (_m *WatchlistRepository) CreatePerpetualWatchlist(_a0 domain.PerpetualWatchlist) error {
+	ret := _m.Called(_a0)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(domain.PerpetualWatchlist) error); ok {
+		r0 = rf(_a0)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// DeleteFundingWatchlist provides a mock function with given fields: chatID, pair
+func (_m *WatchlistRepository) DeleteFundingWatchlist(chatID int64, pair domain.Pair) error {
 	ret := _m.Called(chatID, pair)
 
 	var r0 error
@@ -41,8 +69,22 @@ func (_m *WatchlistRepository) DeleteWatchlist(chatID int64, pair domain.Pair) e
 	return r0
 }
 
-// RetrieveWatchlists provides a mock function with given fields: chatID
-func (_m *WatchlistRepository) RetrieveWatchlists(chatID int64) ([]domain.Pair, error) {
+// DeletePerpetualWatchlist provides a mock function with given fields: _a0
+func (_m *WatchlistRepository) DeletePerpetualWatchlist(_a0 domain.PerpetualWatchlist) error {
+	ret := _m.Called(_a0)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(domain.PerpetualWatchlist) error); ok {
+		r0 = rf(_a0)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// RetrieveFundingWatchlists provides a mock function with given fields: chatID
+func (_m *WatchlistRepository) RetrieveFundingWatchlists(chatID int64) ([]domain.Pair, error) {
 	ret := _m.Called(chatID)
 
 	var r0 []domain.Pair
@@ -65,6 +107,96 @@ func (_m *WatchlistRepository) RetrieveWatchlists(chatID int64) ([]domain.Pair, 
 	}
 
 	return r0, r1
+}
+
+// RetrievePerpPrevPrice provides a mock function with given fields: _a0
+func (_m *WatchlistRepository) RetrievePerpPrevPrice(_a0 domain.Pair) (domain.PrevPrice, error) {
+	ret := _m.Called(_a0)
+
+	var r0 domain.PrevPrice
+	var r1 error
+	if rf, ok := ret.Get(0).(func(domain.Pair) (domain.PrevPrice, error)); ok {
+		return rf(_a0)
+	}
+	if rf, ok := ret.Get(0).(func(domain.Pair) domain.PrevPrice); ok {
+		r0 = rf(_a0)
+	} else {
+		r0 = ret.Get(0).(domain.PrevPrice)
+	}
+
+	if rf, ok := ret.Get(1).(func(domain.Pair) error); ok {
+		r1 = rf(_a0)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// RetrievePerpetualWatchlists provides a mock function with given fields:
+func (_m *WatchlistRepository) RetrievePerpetualWatchlists() ([]domain.PerpetualWatchlist, error) {
+	ret := _m.Called()
+
+	var r0 []domain.PerpetualWatchlist
+	var r1 error
+	if rf, ok := ret.Get(0).(func() ([]domain.PerpetualWatchlist, error)); ok {
+		return rf()
+	}
+	if rf, ok := ret.Get(0).(func() []domain.PerpetualWatchlist); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]domain.PerpetualWatchlist)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// RetrievePerpetualWatchlistsOfUser provides a mock function with given fields: chatID
+func (_m *WatchlistRepository) RetrievePerpetualWatchlistsOfUser(chatID int64) ([]domain.PerpetualWatchlist, error) {
+	ret := _m.Called(chatID)
+
+	var r0 []domain.PerpetualWatchlist
+	var r1 error
+	if rf, ok := ret.Get(0).(func(int64) ([]domain.PerpetualWatchlist, error)); ok {
+		return rf(chatID)
+	}
+	if rf, ok := ret.Get(0).(func(int64) []domain.PerpetualWatchlist); ok {
+		r0 = rf(chatID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]domain.PerpetualWatchlist)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(int64) error); ok {
+		r1 = rf(chatID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// UpdatePerpPrevPrice provides a mock function with given fields: _a0
+func (_m *WatchlistRepository) UpdatePerpPrevPrice(_a0 domain.PrevPrice) error {
+	ret := _m.Called(_a0)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(domain.PrevPrice) error); ok {
+		r0 = rf(_a0)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
 
 // NewWatchlistRepository creates a new instance of WatchlistRepository. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.

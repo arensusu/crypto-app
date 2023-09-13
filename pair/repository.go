@@ -1,4 +1,4 @@
-package funding
+package pair
 
 import (
 	"errors"
@@ -9,16 +9,16 @@ import (
 	"gorm.io/gorm"
 )
 
-type FundingPostgresRepository struct {
+type PairPostgresRepository struct {
 	db  *gorm.DB
 	api *coinglass.CoinglassApi
 }
 
-func NewFundingPostgresRepository(db *gorm.DB, api *coinglass.CoinglassApi) domain.FundingRepository {
-	return &FundingPostgresRepository{db, api}
+func NewPairPostgresRepository(db *gorm.DB, api *coinglass.CoinglassApi) domain.PairRepository {
+	return &PairPostgresRepository{db, api}
 }
 
-func (repo *FundingPostgresRepository) GetFundingHistory(exchange, symbol string) ([]float64, error) {
+func (repo *PairPostgresRepository) GetFundingHistory(exchange, symbol string) ([]float64, error) {
 	responseData, err := repo.api.GetFundingRateUSDHistory(symbol, "h8")
 	if err != nil {
 		return []float64{}, err
@@ -32,7 +32,7 @@ func (repo *FundingPostgresRepository) GetFundingHistory(exchange, symbol string
 	return dataList, nil
 }
 
-func (repo *FundingPostgresRepository) GetPerpetualMarket(exchange, symbol string) (coinglass.PerpetualMarket, error) {
+func (repo *PairPostgresRepository) GetPerpetualMarket(exchange, symbol string) (coinglass.PerpetualMarket, error) {
 	responseData, err := repo.api.GetPerpetualMarket(symbol)
 	if err != nil {
 		return coinglass.PerpetualMarket{}, err
@@ -46,7 +46,7 @@ func (repo *FundingPostgresRepository) GetPerpetualMarket(exchange, symbol strin
 	return coinglass.PerpetualMarket{}, errors.New("exchange is not exist")
 }
 
-func (repo *FundingPostgresRepository) CreateFundingSearched(chatID int64, pair domain.Pair) error {
+func (repo *PairPostgresRepository) CreateFundingSearched(chatID int64, pair domain.Pair) error {
 	searched := domain.FundingSearched{
 		ChatID: chatID,
 		Pair:   pair,
@@ -58,7 +58,7 @@ func (repo *FundingPostgresRepository) CreateFundingSearched(chatID int64, pair 
 	return nil
 }
 
-func (repo *FundingPostgresRepository) RetrieveFundingSearched(chatID int64) ([]domain.Pair, error) {
+func (repo *PairPostgresRepository) RetrieveFundingSearched(chatID int64) ([]domain.Pair, error) {
 	var pairs []domain.Pair
 
 	err := repo.db.Model(&domain.FundingSearched{}).Order("created_at desc").Where("chat_id=?", chatID).Limit(5).Find(&pairs).Error

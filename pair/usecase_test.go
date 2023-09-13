@@ -1,4 +1,4 @@
-package funding
+package pair
 
 import (
 	"funding-rate/coinglass"
@@ -10,8 +10,8 @@ import (
 
 func Test_GetFundingData(t *testing.T) {
 	watchlistRepo := mocks.NewWatchlistRepository(t)
-	fundingRepo := mocks.NewFundingRepository(t)
-	usecase := NewFundingUsecase(watchlistRepo, fundingRepo)
+	fundingRepo := mocks.NewPairRepository(t)
+	usecase := NewPairUsecase(watchlistRepo, fundingRepo)
 
 	result, err := usecase.GetFundingData("Bybit", "BTC")
 }
@@ -35,7 +35,7 @@ func Test_AddFundingSearched(t *testing.T) {
 func Test_Funding(t *testing.T) {
 	pairs := []coinglass.Pair{{Exchange: "Bybit", Symbol: "ETHUSDT"}}
 	history := getFakeHistory(100)
-	mockRepo := mocks.NewIFundingRepository(t)
+	mockRepo := mocks.NewIPairRepository(t)
 	mockRepo.On("GetFundingWatchList", int64(1)).Return(pairs, nil)
 	mockRepo.On("GetFundingHistory", pairs[0]).Return(history, nil)
 	fundingUseCase := NewFundingUseCase(mockRepo)
@@ -57,7 +57,7 @@ func getFakeHistory(period int) []float64 {
 func Test_NewFunding(t *testing.T) {
 	newPair := coinglass.Pair{Exchange: "Binance", Symbol: "BTCUSDT"}
 	followingPairs := []coinglass.Pair{{Exchange: "Bybit", Symbol: "ETHUSDT"}}
-	mockRepo := mocks.NewIFundingRepository(t)
+	mockRepo := mocks.NewIPairRepository(t)
 	mockRepo.On("GetFundingHistory", newPair).Return([]float64{0.1, 0.1}, nil)
 	mockRepo.On("GetFundingWatchList", int64(1)).Return(followingPairs, nil)
 	mockRepo.On("AddFundingWatchList", int64(1), newPair).Return(nil)
@@ -70,7 +70,7 @@ func Test_NewFunding(t *testing.T) {
 
 func Test_ShowFunding(t *testing.T) {
 	pairs := []coinglass.Pair{{Exchange: "Bybit", Symbol: "ETHUSDT"}}
-	mockRepo := mocks.NewIFundingRepository(t)
+	mockRepo := mocks.NewIPairRepository(t)
 	mockRepo.On("GetFundingWatchList", int64(1)).Return(pairs, nil)
 	fundingUseCase := NewFundingUseCase(mockRepo)
 
@@ -82,7 +82,7 @@ func Test_ShowFunding(t *testing.T) {
 
 func Test_DeleteFunding(t *testing.T) {
 	pairs := []coinglass.Pair{{Exchange: "Bybit", Symbol: "ETHUSDT"}}
-	mockRepo := mocks.NewIFundingRepository(t)
+	mockRepo := mocks.NewIPairRepository(t)
 	mockRepo.On("GetFundingWatchList", int64(1)).Return(pairs, nil)
 	mockRepo.On("DeleteFundingWatchList", int64(1), pairs[0]).Return(nil)
 	fundingUseCase := NewFundingUseCase(mockRepo)

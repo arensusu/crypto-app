@@ -13,7 +13,7 @@ type FundingSearched struct {
 	CreatedAt time.Time
 }
 
-type FundingRepository interface {
+type PairRepository interface {
 	GetFundingHistory(exchange, symbol string) ([]float64, error)
 	GetPerpetualMarket(exchange, symbol string) (coinglass.PerpetualMarket, error)
 
@@ -49,7 +49,7 @@ type PerpData struct {
 	NextFundingTime    time.Time   `json:"nextFundingTime"`
 }
 
-type FundingUsecase interface {
+type PairUsecase interface {
 	GetFundingData(exchange, symbol string) (FundingData, error)
 	GetPerpData(exchange, symbol string) (PerpData, error)
 	GetFundingDataOfUser(chatID int64) ([]FundingData, error)

@@ -11,7 +11,7 @@ import (
 
 func Test_NewUser(t *testing.T) {
 	mockUserRepo := mocks.NewIUserRepository(t)
-	mockFundingRepo := mocks.NewIFundingRepository(t)
+	mockFundingRepo := mocks.NewIPairRepository(t)
 	mockUserRepo.On("AddUser", int64(1)).Return(nil)
 	usecase := NewUserUseCase(mockUserRepo, mockFundingRepo)
 
@@ -25,7 +25,7 @@ func Test_GetUserNotification(t *testing.T) {
 	pairs := []coinglass.Pair{{Exchange: "Bybit", Symbol: "ETHUSDT"}}
 	history := []float64{0.1, -0.1}
 	mockUserRepo := mocks.NewIUserRepository(t)
-	mockFundingRepo := mocks.NewIFundingRepository(t)
+	mockFundingRepo := mocks.NewIPairRepository(t)
 	mockUserRepo.On("RetrieveUsers").Return(users, nil)
 	mockFundingRepo.On("GetFundingWatchList", int64(1)).Return(pairs, nil)
 	mockFundingRepo.On("GetFundingHistory", pairs[0]).Return(history, nil)

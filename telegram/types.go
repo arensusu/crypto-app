@@ -14,10 +14,10 @@ type telegramHandler struct {
 
 	userUsecase      domain.UserUsecase
 	watchlistUsecase domain.WatchlistUsecase
-	fundingUsecase   domain.FundingUsecase
+	fundingUsecase   domain.PairUsecase
 }
 
-func NewTelegramHandler(tgbot *tgbotapi.BotAPI, userUsecase domain.UserUsecase, watchlistUsecase domain.WatchlistUsecase, fundingUsecase domain.FundingUsecase) telegramHandler {
+func NewTelegramHandler(tgbot *tgbotapi.BotAPI, userUsecase domain.UserUsecase, watchlistUsecase domain.WatchlistUsecase, fundingUsecase domain.PairUsecase) telegramHandler {
 	return telegramHandler{tgbot, map[int64][]string{}, userUsecase, watchlistUsecase, fundingUsecase}
 }
 

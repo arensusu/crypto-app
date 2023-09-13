@@ -13,6 +13,20 @@ type WatchlistUsecase struct {
 	mock.Mock
 }
 
+// AddPerpetualWatchlist provides a mock function with given fields: _a0
+func (_m *WatchlistUsecase) AddPerpetualWatchlist(_a0 domain.PerpetualWatchlist) error {
+	ret := _m.Called(_a0)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(domain.PerpetualWatchlist) error); ok {
+		r0 = rf(_a0)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // AddWatchlist provides a mock function with given fields: chatID, exchange, symbol
 func (_m *WatchlistUsecase) AddWatchlist(chatID int64, exchange string, symbol string) error {
 	ret := _m.Called(chatID, exchange, symbol)
@@ -25,6 +39,82 @@ func (_m *WatchlistUsecase) AddWatchlist(chatID int64, exchange string, symbol s
 	}
 
 	return r0
+}
+
+// GetPerpPrevPrice provides a mock function with given fields: _a0
+func (_m *WatchlistUsecase) GetPerpPrevPrice(_a0 domain.Pair) (float64, error) {
+	ret := _m.Called(_a0)
+
+	var r0 float64
+	var r1 error
+	if rf, ok := ret.Get(0).(func(domain.Pair) (float64, error)); ok {
+		return rf(_a0)
+	}
+	if rf, ok := ret.Get(0).(func(domain.Pair) float64); ok {
+		r0 = rf(_a0)
+	} else {
+		r0 = ret.Get(0).(float64)
+	}
+
+	if rf, ok := ret.Get(1).(func(domain.Pair) error); ok {
+		r1 = rf(_a0)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetPerpetualWatchlists provides a mock function with given fields:
+func (_m *WatchlistUsecase) GetPerpetualWatchlists() ([]domain.PerpetualWatchlist, error) {
+	ret := _m.Called()
+
+	var r0 []domain.PerpetualWatchlist
+	var r1 error
+	if rf, ok := ret.Get(0).(func() ([]domain.PerpetualWatchlist, error)); ok {
+		return rf()
+	}
+	if rf, ok := ret.Get(0).(func() []domain.PerpetualWatchlist); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]domain.PerpetualWatchlist)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetPerpetualWatchlistsOfUser provides a mock function with given fields: chatID
+func (_m *WatchlistUsecase) GetPerpetualWatchlistsOfUser(chatID int64) ([]domain.PerpetualWatchlist, error) {
+	ret := _m.Called(chatID)
+
+	var r0 []domain.PerpetualWatchlist
+	var r1 error
+	if rf, ok := ret.Get(0).(func(int64) ([]domain.PerpetualWatchlist, error)); ok {
+		return rf(chatID)
+	}
+	if rf, ok := ret.Get(0).(func(int64) []domain.PerpetualWatchlist); ok {
+		r0 = rf(chatID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]domain.PerpetualWatchlist)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(int64) error); ok {
+		r1 = rf(chatID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // GetWatchlists provides a mock function with given fields: chatID
@@ -53,6 +143,20 @@ func (_m *WatchlistUsecase) GetWatchlists(chatID int64) ([]domain.Pair, error) {
 	return r0, r1
 }
 
+// RemovePerpetualWatchlist provides a mock function with given fields: _a0
+func (_m *WatchlistUsecase) RemovePerpetualWatchlist(_a0 domain.PerpetualWatchlist) error {
+	ret := _m.Called(_a0)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(domain.PerpetualWatchlist) error); ok {
+		r0 = rf(_a0)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // RemoveWatchlist provides a mock function with given fields: chatID, exchange, symbol
 func (_m *WatchlistUsecase) RemoveWatchlist(chatID int64, exchange string, symbol string) error {
 	ret := _m.Called(chatID, exchange, symbol)
@@ -60,6 +164,20 @@ func (_m *WatchlistUsecase) RemoveWatchlist(chatID int64, exchange string, symbo
 	var r0 error
 	if rf, ok := ret.Get(0).(func(int64, string, string) error); ok {
 		r0 = rf(chatID, exchange, symbol)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// SetPerpPrevPrice provides a mock function with given fields: _a0
+func (_m *WatchlistUsecase) SetPerpPrevPrice(_a0 domain.PrevPrice) error {
+	ret := _m.Called(_a0)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(domain.PrevPrice) error); ok {
+		r0 = rf(_a0)
 	} else {
 		r0 = ret.Error(0)
 	}

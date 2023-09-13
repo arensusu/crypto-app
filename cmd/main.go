@@ -1,16 +1,13 @@
 package main
 
 import (
-	"net/http"
 	"os"
 
-	"github.com/gorilla/mux"
 	_ "github.com/joho/godotenv/autoload"
 
 	"funding-rate/coinglass"
 	"funding-rate/database"
-	"funding-rate/funding"
-	httpapi "funding-rate/http"
+	"funding-rate/pair"
 	"funding-rate/telegram"
 	"funding-rate/user"
 	"funding-rate/watchlist"
@@ -22,20 +19,15 @@ func main() {
 
 	userRepo := user.NewUserPostgresRepository(db)
 	watchlistRepo := watchlist.NewWatchlistPostgresRepository(db)
-	fundingRepo := funding.NewFundingPostgresRepository(db, &api)
+	fundingRepo := pair.NewPairPostgresRepository(db, &api)
 
 	userUsecase := user.NewUserUsecase(userRepo)
 	watchlistUsecase := watchlist.NewWatchlistUsecase(watchlistRepo)
-	fundingUsecase := funding.NewFundingUsecase(watchlistRepo, fundingRepo)
+	fundingUsecase := pair.NewPairUsecase(watchlistRepo, fundingRepo)
 
 	// tgbot
 	tgbot := telegram.NewTelegramBot()
 	telegramHandler := telegram.NewTelegramHandler(tgbot, userUsecase, watchlistUsecase, fundingUsecase)
 
 	go telegramHandler.Run()
-
-	// restful api
-	router := mux.NewRouter()
-	httpapi.NewFundingHandler(router, fundingUsecase)
-	http.ListenAndServe(":8000", router)
 }

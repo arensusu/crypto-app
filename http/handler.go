@@ -10,10 +10,10 @@ import (
 )
 
 type FundingHandler struct {
-	usecase domain.FundingUsecase
+	usecase domain.PairUsecase
 }
 
-func NewFundingHandler(r *mux.Router, fundingUsecase domain.FundingUsecase) {
+func NewFundingHandler(r *mux.Router, fundingUsecase domain.PairUsecase) {
 	handler := &FundingHandler{fundingUsecase}
 	r.HandleFunc("/funding/{exchange}/{symbol}", handler.GetFundingHistory)
 	r.HandleFunc("/perp/{exchange}/{symbol}", handler.GetPerpetual)
