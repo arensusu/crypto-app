@@ -4,10 +4,14 @@ import (
 	"errors"
 	"fmt"
 	"funding-rate/exchange"
+	binanceEx "funding-rate/exchange/binance"
+	bitgetEx "funding-rate/exchange/bitget"
 	bybitEx "funding-rate/exchange/bybit"
 	"funding-rate/exchange/strategy"
 	"log"
 	"os"
+	"sync"
+	"time"
 
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -30,17 +34,27 @@ func main() {
 
 	// go telegramHandler.Run()
 	bybit := bybitEx.New(os.Getenv("BYBIT_API_KEY"), os.Getenv("BYBIT_API_SECRET"))
-	exchange := exchange.New(bybit)
-	for _, ex := range exchange.List {
-		strat, ok := ex.(strategy.CrossExArbitrage)
-		if !ok {
-			log.Fatal(errors.New("type error"))
-		}
-		res, err := strat.GetCrossExArbitrageResponse("ETH")
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Printf("%+v\n", res)
-	}
+	binance := binanceEx.New(os.Getenv("BINANCE_API_KEY"), os.Getenv("BINANCE_API_SECRET"))
+	bitget := bitgetEx.New()
 
+	exchange := exchange.New(binance, bybit, bitget)
+	wg := new(sync.WaitGroup)
+	wg.Add(len(exchange.List))
+	start := time.Now().UnixMilli()
+	for _, ex := range exchange.List {
+		go func(ex any) {
+			defer wg.Done()
+			strat, ok := ex.(strategy.CrossExArbitrage)
+			if !ok {
+				log.Fatal(errors.New("type error"))
+			}
+			res, err := strat.GetCrossExArbitrageResponse("OGN")
+			if err != nil {
+				log.Fatal(err)
+			}
+			fmt.Printf("%+v\n", res)
+		}(ex)
+	}
+	wg.Wait()
+	fmt.Println(time.Now().UnixMilli() - start)
 }
