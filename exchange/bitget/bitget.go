@@ -4,6 +4,7 @@ package bitgetEx
 import (
 	"encoding/json"
 	"funding-rate/exchange/strategy"
+	"strconv"
 
 	"github.com/outtoin/bitget-golang-sdk-api"
 )
@@ -21,7 +22,7 @@ func New() *BitgetExchange {
 	}
 }
 
-func (ex *BitgetExchange) GetCrossExArbitrageResponse(coin string) (*strategy.CrossExArbitrageResponse, error) {
+func (ex *BitgetExchange) GetCrossExArbitrageInformation(coin string) (*strategy.CrossExArbitrageInformation, error) {
 	symbol := coin + "USDT_UMCBL"
 	marketService := ex.Client.GetMixMarketService()
 
@@ -45,10 +46,13 @@ func (ex *BitgetExchange) GetCrossExArbitrageResponse(coin string) (*strategy.Cr
 		return nil, err
 	}
 
-	return &strategy.CrossExArbitrageResponse{
+	price, _ := strconv.ParseFloat(ticker["data"].(map[string]interface{})["last"].(string), 64)
+	fundingRate, _ := strconv.ParseFloat(ticker["data"].(map[string]interface{})["fundingRate"].(string), 64)
+	fundingTime, _ := strconv.ParseInt(nextFundingTime["data"].(map[string]interface{})["fundingTime"].(string), 10, 64)
+	return &strategy.CrossExArbitrageInformation{
 		ExchangeName:    ex.Name,
-		LastPrice:       ticker["data"].(map[string]interface{})["last"].(string),
-		FundingRate:     ticker["data"].(map[string]interface{})["fundingRate"].(string),
-		NextFundingTime: nextFundingTime["data"].(map[string]interface{})["fundingTime"].(string),
+		LastPrice:       price,
+		FundingRate:     fundingRate,
+		NextFundingTime: fundingTime,
 	}, nil
 }

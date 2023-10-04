@@ -1,31 +1,23 @@
 package strategy
 
-import (
-	"encoding/json"
-	"fmt"
-)
-
-type CrossExArbitrageResponse struct {
+type CrossExArbitrageInformation struct {
 	ExchangeName    string
-	LastPrice       string
-	FundingRate     string
-	NextFundingTime string
+	LastPrice       float64
+	FundingRate     float64
+	NextFundingTime int64
 }
 
-type CrossExArbitrage interface {
-	GetCrossExArbitrageResponse(string) (*CrossExArbitrageResponse, error)
+type CrossExArbitrager interface {
+	GetCrossExArbitrageInformation(string) (*CrossExArbitrageInformation, error)
 }
 
-func CrossExArbitrageEncoder(exchange string, data interface{}) (*CrossExArbitrageResponse, error) {
-	jsonData, err := json.Marshal(data)
-	if err != nil {
-		return &CrossExArbitrageResponse{}, fmt.Errorf("marshal ticker data failed: %w", err)
-	}
+type CrossExArbitrageResult struct {
+	ExchangePair     string
+	PriceDiffPercent float64
+	FundingRateDiff  float64
+	NextFundingTime  string
+}
 
-	response := new(CrossExArbitrageResponse)
-	if err := json.Unmarshal(jsonData, response); err != nil {
-		return &CrossExArbitrageResponse{}, fmt.Errorf("unmarshal data to response failed: %w", err)
-	}
-	response.ExchangeName = exchange
-	return response, nil
+type CrossExArbitrageUsecase interface {
+	CalculateCrossExArbitrage(string) ([]CrossExArbitrageResult, error)
 }

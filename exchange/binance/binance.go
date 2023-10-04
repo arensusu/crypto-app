@@ -4,6 +4,7 @@ package binanceEx
 import (
 	"context"
 	"funding-rate/exchange/strategy"
+	"os"
 	"strconv"
 
 	"github.com/adshao/go-binance/v2"
@@ -15,17 +16,17 @@ type BinanceExchange struct {
 	FuturesClient *futures.Client
 }
 
-func New(apiKey, apiSecret string) *BinanceExchange {
-	client := binance.NewFuturesClient(apiKey, apiSecret)
+func New() *BinanceExchange {
+	client := binance.NewFuturesClient(os.Getenv("BINANCE_API_KEY"), os.Getenv("BINANCE_API_SECRET"))
 	return &BinanceExchange{
 		Name:          "Binance",
 		FuturesClient: client,
 	}
 }
 
-func (ex *BinanceExchange) GetCrossExArbitrageResponse(coin string) (*strategy.CrossExArbitrageResponse, error) {
+func (ex *BinanceExchange) GetCrossExArbitrageInformation(coin string) (*strategy.CrossExArbitrageInformation, error) {
 	symbol := coin + "USDT"
-	prices, err := ex.FuturesClient.NewListPricesService().Symbol(symbol).Do(context.Background())
+	symbolPrices, err := ex.FuturesClient.NewListPricesService().Symbol(symbol).Do(context.Background())
 	if err != nil {
 		return nil, err
 	}
@@ -35,13 +36,15 @@ func (ex *BinanceExchange) GetCrossExArbitrageResponse(coin string) (*strategy.C
 		return nil, err
 	}
 
-	price := prices[0]
+	symbolPrice := symbolPrices[0]
 	premiumIndex := premiumIndexes[0]
 
-	return &strategy.CrossExArbitrageResponse{
+	price, _ := strconv.ParseFloat(symbolPrice.Price, 64)
+	fundingRate, _ := strconv.ParseFloat(premiumIndex.LastFundingRate, 64)
+	return &strategy.CrossExArbitrageInformation{
 		ExchangeName:    ex.Name,
-		LastPrice:       price.Price,
-		FundingRate:     premiumIndex.LastFundingRate,
-		NextFundingTime: strconv.FormatInt((premiumIndex.NextFundingTime), 10),
+		LastPrice:       price,
+		FundingRate:     fundingRate,
+		NextFundingTime: premiumIndex.NextFundingTime,
 	}, nil
 }
