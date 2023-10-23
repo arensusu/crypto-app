@@ -1,8 +1,8 @@
 package api
 
 import (
+	"crypto-exchange/domain"
 	"encoding/json"
-	"funding-rate/domain"
 	"log"
 	"net/http"
 

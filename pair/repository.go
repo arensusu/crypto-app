@@ -1,10 +1,10 @@
 package pair
 
 import (
+	"crypto-exchange/coinglass"
+	"crypto-exchange/domain"
 	"errors"
 	"fmt"
-	"funding-rate/coinglass"
-	"funding-rate/domain"
 
 	"gorm.io/gorm"
 )

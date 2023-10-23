@@ -1,7 +1,7 @@
 package watchlist
 
 import (
-	"funding-rate/domain"
+	"crypto-exchange/domain"
 
 	"gorm.io/gorm"
 )

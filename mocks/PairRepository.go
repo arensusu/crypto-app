@@ -3,8 +3,8 @@
 package mocks
 
 import (
-	coinglass "funding-rate/coinglass"
-	domain "funding-rate/domain"
+	coinglass "crypto-exchange/coinglass"
+	domain "crypto-exchange/domain"
 
 	mock "github.com/stretchr/testify/mock"
 )

@@ -1,8 +1,8 @@
 package domain
 
 import (
+	"crypto-exchange/coinglass"
 	"fmt"
-	"funding-rate/coinglass"
 	"time"
 )
 

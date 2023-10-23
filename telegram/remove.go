@@ -1,8 +1,8 @@
 package telegram
 
 import (
+	"crypto-exchange/domain"
 	"fmt"
-	"funding-rate/domain"
 	"strconv"
 )
 

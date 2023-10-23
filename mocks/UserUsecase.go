@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	domain "funding-rate/domain"
+	domain "crypto-exchange/domain"
 
 	mock "github.com/stretchr/testify/mock"
 )

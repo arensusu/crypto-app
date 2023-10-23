@@ -1,9 +1,9 @@
 package watchlist
 
 import (
+	"crypto-exchange/domain"
 	"errors"
 	"fmt"
-	"funding-rate/domain"
 )
 
 type WatchlistUsecase struct {

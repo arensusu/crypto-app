@@ -1,8 +1,8 @@
 package database
 
 import (
+	"crypto-exchange/domain"
 	"fmt"
-	"funding-rate/domain"
 	"os"
 
 	"gorm.io/driver/postgres"

@@ -1,8 +1,8 @@
 package telegram
 
 import (
+	"crypto-exchange/domain"
 	"fmt"
-	"funding-rate/domain"
 	"log"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"

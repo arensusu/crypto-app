@@ -1,8 +1,8 @@
 package pair
 
 import (
+	"crypto-exchange/domain"
 	"fmt"
-	"funding-rate/domain"
 	"math"
 	"time"
 )

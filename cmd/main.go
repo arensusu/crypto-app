@@ -1,10 +1,11 @@
 package main
 
 import (
-	binance "funding-rate/exchange/binance"
-	bitget "funding-rate/exchange/bitget"
-	bybit "funding-rate/exchange/bybit"
-	"funding-rate/exchange/strategy"
+	"crypto-exchange/exchange/binance"
+	"crypto-exchange/exchange/binance_future"
+	bitget "crypto-exchange/exchange/bitget"
+	bybit "crypto-exchange/exchange/bybit"
+	"fmt"
 
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -28,8 +29,15 @@ func main() {
 	// go telegramHandler.Run()
 	bybit := bybit.New()
 	binance := binance.New()
+	binance_future := binance_future.New()
 	bitget := bitget.New()
+	_, _, _ = binance, bybit, binance_future
+	// exchange := strategy.New(binance, bybit, bitget)
+	// exchange.GetSingleCrossExchangeArbitrage("OGN")
 
-	exchange := strategy.New(binance, bybit, bitget)
-	exchange.GetSingleCrossExchangeArbitrage("OGN")
+	assets, err := bitget.GetAllAsset()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(assets)
 }

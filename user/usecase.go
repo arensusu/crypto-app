@@ -1,7 +1,7 @@
 package user
 
 import (
-	"funding-rate/domain"
+	"crypto-exchange/domain"
 )
 
 type UserUsecase struct {

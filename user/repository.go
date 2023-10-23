@@ -1,8 +1,8 @@
 package user
 
 import (
+	"crypto-exchange/domain"
 	"fmt"
-	"funding-rate/domain"
 
 	"gorm.io/gorm"
 )
