@@ -3,9 +3,9 @@ package main
 import (
 	"crypto-exchange/exchange/binance"
 	"crypto-exchange/exchange/binance_future"
-	bitget "crypto-exchange/exchange/bitget"
-	bybit "crypto-exchange/exchange/bybit"
-	"fmt"
+	"crypto-exchange/exchange/bitget"
+	"crypto-exchange/exchange/bybit"
+	"crypto-exchange/pkg/assets"
 
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -35,9 +35,6 @@ func main() {
 	// exchange := strategy.New(binance, bybit, bitget)
 	// exchange.GetSingleCrossExchangeArbitrage("OGN")
 
-	assets, err := bitget.GetAllAsset()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(assets)
+	assetsUsecase := assets.NewAssetsUsecase([]any{bybit, binance, binance_future, bitget})
+	assetsUsecase.GetAssets()
 }

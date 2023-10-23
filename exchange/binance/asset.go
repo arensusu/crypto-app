@@ -8,31 +8,20 @@ import (
 
 func (ex *Binance) GetAllAsset() ([]asset.Asset, error) {
 	assets := []asset.Asset{}
-	spotAsset, err := ex.GetAllAssetInSpot()
-	if err != nil {
-		return []asset.Asset{}, err
-	}
-	assets = append(assets, spotAsset...)
-
-	return assets, nil
-}
-
-func (ex *Binance) GetAllAssetInSpot() ([]asset.Asset, error) {
-	assets := []asset.Asset{}
 	res, err := ex.Client.NewGetUserAsset().Do(context.Background())
 	if err != nil {
-		return assets, err
+		return nil, err
 	}
 
 	for _, record := range res {
 		freeAmount, err := strconv.ParseFloat(record.Free, 64)
 		if err != nil {
-			return []asset.Asset{}, err
+			return nil, err
 		}
 
 		lockedAmount, err := strconv.ParseFloat(record.Locked, 64)
 		if err != nil {
-			return []asset.Asset{}, err
+			return nil, err
 		}
 
 		assets = append(assets, asset.Asset{

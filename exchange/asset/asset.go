@@ -7,5 +7,5 @@ type Asset struct {
 
 type AssetGetter interface {
 	//GetAsset(string) Asset
-	GetAllAsset() []Asset
+	GetAllAsset() ([]Asset, error)
 }
