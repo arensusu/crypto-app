@@ -5,7 +5,12 @@ type Asset struct {
 	Amount float64
 }
 
+type ExchangeAsset struct {
+	Name   string
+	Assets []Asset
+}
+
 type AssetGetter interface {
 	//GetAsset(string) Asset
-	GetAllAsset() ([]Asset, error)
+	GetAllAsset() (ExchangeAsset, error)
 }

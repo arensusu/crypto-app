@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-func (ex *BinanceFuture) GetAllAsset() ([]asset.Asset, error) {
+func (ex *BinanceFuture) GetAllAsset() (*asset.ExchangeAsset, error) {
 	assets := []asset.Asset{}
 	res, err := ex.Client.NewGetBalanceService().Do(context.Background())
 	if err != nil {
@@ -24,5 +24,8 @@ func (ex *BinanceFuture) GetAllAsset() ([]asset.Asset, error) {
 		})
 	}
 
-	return assets, nil
+	return &asset.ExchangeAsset{
+		Name:   ex.Name,
+		Assets: assets,
+	}, nil
 }

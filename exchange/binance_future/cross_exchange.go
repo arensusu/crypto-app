@@ -6,27 +6,27 @@ import (
 	"strconv"
 )
 
-func (ex *BinanceFuture) GetCrossExArbitrageInformation(coin string) (*strategy.CrossExArbitrageInformation, error) {
-	symbol := coin + "USDT"
-	symbolPrices, err := ex.Client.NewListPricesService().Symbol(symbol).Do(context.Background())
+func (ex *BinanceFuture) GetCrossExArbitrageInformation() (strategy.SymbolExchangeFundingPrice, error) {
+	symbolPrices, err := ex.Client.NewListPricesService().Do(context.Background())
 	if err != nil {
 		return nil, err
 	}
 
-	premiumIndexes, err := ex.Client.NewPremiumIndexService().Symbol(symbol).Do(context.Background())
+	premiumIndexes, err := ex.Client.NewPremiumIndexService().Do(context.Background())
 	if err != nil {
 		return nil, err
 	}
 
-	symbolPrice := symbolPrices[0]
-	premiumIndex := premiumIndexes[0]
+	//results := []strategy.CrossExArbitrageInformation{}
 
-	price, _ := strconv.ParseFloat(symbolPrice.Price, 64)
-	fundingRate, _ := strconv.ParseFloat(premiumIndex.LastFundingRate, 64)
-	return &strategy.CrossExArbitrageInformation{
-		ExchangeName:    ex.Name,
-		LastPrice:       price,
-		FundingRate:     fundingRate,
-		NextFundingTime: premiumIndex.NextFundingTime,
-	}, nil
+	results := strategy.SymbolExchangeFundingPrice{}
+	for _, symbolPrice := range symbolPrices {
+		results.Set(ex.Name, string(symbolPrice.Symbol), symbolPrice.Price, "0", "0")
+	}
+
+	for _, premium := range premiumIndexes {
+		results.SetSpecial(ex.Name, premium.Symbol, premium.LastFundingRate, strconv.FormatInt(premium.NextFundingTime, 10))
+	}
+
+	return results, nil
 }

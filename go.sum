@@ -10,6 +10,8 @@ github.com/arensusu/bitget-golang-sdk-api v0.0.3 h1:tjwY24XRWOleah3pqZAo09i71Tdg
 github.com/arensusu/bitget-golang-sdk-api v0.0.3/go.mod h1:6PMdNmeANNxT+jqDGVf2UQDhmqF58cYCRNMjRslY8rs=
 github.com/arensusu/bitget-golang-sdk-api v0.0.4 h1:tO8j/LCwWMHykPNNtprtJixedkNAOc/2CCKo5bGtsxU=
 github.com/arensusu/bitget-golang-sdk-api v0.0.4/go.mod h1:6PMdNmeANNxT+jqDGVf2UQDhmqF58cYCRNMjRslY8rs=
+github.com/arensusu/bitget-golang-sdk-api v0.0.5 h1:W4kwAnuBPdR5gXcVDyuqRjXXBkEuss5/g9jTT79esU8=
+github.com/arensusu/bitget-golang-sdk-api v0.0.5/go.mod h1:6PMdNmeANNxT+jqDGVf2UQDhmqF58cYCRNMjRslY8rs=
 github.com/bitly/go-simplejson v0.5.0 h1:6IH+V8/tVMab511d5bn4M7EwGXZf9Hj6i2xSwkNEM+Y=
 github.com/bitly/go-simplejson v0.5.0/go.mod h1:cXHtHw4XUPsvGaxgjIAn8PhEWG9NfngEKAMDJEczWVA=
 github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 h1:DDGfHa7BWjL4YnC6+E63dPcxHo2sUxDIu8g3QgEJdRY=

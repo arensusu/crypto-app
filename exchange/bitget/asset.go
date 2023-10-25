@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-func (ex *Bitget) GetAllAsset() ([]asset.Asset, error) {
+func (ex *Bitget) GetAllAsset() (*asset.ExchangeAsset, error) {
 	assets := []asset.Asset{}
 
 	spotAssets, err := ex.GetSpotAssets()
@@ -20,7 +20,10 @@ func (ex *Bitget) GetAllAsset() ([]asset.Asset, error) {
 	}
 	assets = append(assets, mixAssets...)
 
-	return assets, nil
+	return &asset.ExchangeAsset{
+		Name:   ex.Name,
+		Assets: assets,
+	}, nil
 }
 
 func (ex *Bitget) GetSpotAssets() ([]asset.Asset, error) {

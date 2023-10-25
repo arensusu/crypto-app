@@ -7,7 +7,7 @@ import (
 	"github.com/hirokisan/bybit/v2"
 )
 
-func (ex *Bybit) GetAllAsset() ([]asset.Asset, error) {
+func (ex *Bybit) GetAllAsset() (*asset.ExchangeAsset, error) {
 	// only can get balance of main account
 	res, err := ex.Client.V5().Account().GetWalletBalance(bybit.AccountTypeUnified, nil)
 	if err != nil {
@@ -27,5 +27,8 @@ func (ex *Bybit) GetAllAsset() ([]asset.Asset, error) {
 		})
 	}
 
-	return assets, nil
+	return &asset.ExchangeAsset{
+		Name:   ex.Name,
+		Assets: assets,
+	}, nil
 }

@@ -1,10 +1,9 @@
 package strategy
 
 import (
-	"errors"
 	"fmt"
 	"log"
-	"sort"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -18,58 +17,98 @@ func New(exchanges ...interface{}) *StrategyExecuter {
 	return ex
 }
 
-func (exs *StrategyExecuter) GetSingleCrossExchangeArbitrage(coin string) {
-	start := time.Now().UnixMilli()
+func (exs *StrategyExecuter) GetCrossExchangeArbitrage() {
+	//start := time.Now().UnixMilli()
 
 	wg := new(sync.WaitGroup)
 	wg.Add(len(exs.Exchanges))
 
 	lock := new(sync.Mutex)
-	infos := []*CrossExArbitrageInformation{}
-
+	result := SymbolExchangeFundingPrice{}
+	_ = result
 	for _, ex := range exs.Exchanges {
 		go func(ex any) {
 			defer wg.Done()
 			strat, ok := ex.(CrossExArbitrager)
 			if !ok {
-				log.Fatal(errors.New("type error"))
+				log.Fatal(fmt.Errorf("type error: %v", ex))
 			}
 
-			info, err := (strat).GetCrossExArbitrageInformation(coin)
+			info, err := (strat).GetCrossExArbitrageInformation()
 			if err != nil {
 				log.Fatal(err)
 			}
-			fmt.Println(info)
 			lock.Lock()
-			infos = append(infos, info)
+			for k, v := range info {
+				result[k] = append(result[k], v...)
+			}
 			lock.Unlock()
 		}(ex)
 	}
 	wg.Wait()
+	fmt.Println(result["STRAXUSDT"])
 
-	sort.Slice(infos, func(i, j int) bool {
-		return infos[i].LastPrice < infos[j].LastPrice
-	})
-
-	results := []*CrossExArbitrageResult{}
-	for i := 0; i < len(infos); i += 1 {
-		for j := i + 1; j < len(infos); j += 1 {
-			results = append(results, &CrossExArbitrageResult{
-				ExchangePair:     infos[j].ExchangeName + "/" + infos[i].ExchangeName,
-				PriceDiffPercent: rounding(infos[j].LastPrice/infos[i].LastPrice - 1.0),
-				FundingRateDiff:  rounding(infos[j].FundingRate - infos[i].FundingRate),
-				NextFundingTime:  time.UnixMilli(infos[j].NextFundingTime).String() + "/" + time.UnixMilli(infos[i].NextFundingTime).String(),
-			})
+	results := SymbolFundingPriceDiffs{}
+	for symbol, fundingPrices := range result {
+		diffs := []FundingPriceDiff{}
+		for i := 0; i < len(fundingPrices); i += 1 {
+			for j := i + 1; j < len(fundingPrices); j += 1 {
+				diffs = append(diffs, FundingPriceDiff{
+					ExchangeBuy:     fundingPrices[j].Exchange,
+					ExchangeSell:    fundingPrices[i].Exchange,
+					PriceDiff:       rounding(fundingPrices[j].Price/fundingPrices[i].Price - 1.0),
+					FundingRateDiff: rounding(fundingPrices[j].FundingRate - fundingPrices[i].FundingRate),
+					FundingTime:     time.UnixMilli(fundingPrices[j].FundingTime).String() + "/" + time.UnixMilli(fundingPrices[i].FundingTime).String(),
+				})
+			}
 		}
+		results[symbol] = diffs
 	}
-	fmt.Println(time.Now().UnixMilli() - start)
-	for _, result := range results {
-		fmt.Printf("%+v\n", result)
+	fmt.Println(results["STRAXUSDT"])
+}
+
+type FundingPrice struct {
+	Exchange    string
+	Price       float64
+	FundingRate float64
+	FundingTime int64
+}
+
+type SymbolExchangeFundingPrice map[string][]FundingPrice
+
+func (m SymbolExchangeFundingPrice) Set(exchange, symbol, price, fundingRate, fundingTime string) {
+	if _, exist := m[symbol]; !exist {
+		m[symbol] = []FundingPrice{}
+	}
+
+	priceFloat64, _ := strconv.ParseFloat(price, 64)
+	fundingRateFloat64, _ := strconv.ParseFloat(fundingRate, 64)
+	fundingTimeInt64, _ := strconv.ParseInt(fundingTime, 10, 64)
+
+	m[symbol] = append(m[symbol], FundingPrice{
+		Exchange:    exchange,
+		Price:       priceFloat64,
+		FundingRate: fundingRateFloat64,
+		FundingTime: fundingTimeInt64,
+	})
+}
+
+func (m SymbolExchangeFundingPrice) SetSpecial(exchange, symbol, fundingRate, fundingTime string) {
+	fundingRateFloat64, _ := strconv.ParseFloat(fundingRate, 64)
+	fundingTimeInt64, _ := strconv.ParseInt(fundingTime, 10, 64)
+	if elem, ok := m[symbol]; ok {
+		for i, fundingPrice := range elem {
+			if fundingPrice.Exchange == exchange {
+				m[symbol][i].FundingRate = fundingRateFloat64
+				m[symbol][i].FundingTime = fundingTimeInt64
+				break
+			}
+		}
 	}
 }
 
 func rounding(x float64) float64 {
-	if x < 0.001 {
+	if x < 0.0001 && x > -0.0001 {
 		return 0.0
 	}
 	return x

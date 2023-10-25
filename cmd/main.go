@@ -5,7 +5,7 @@ import (
 	"crypto-exchange/exchange/binance_future"
 	"crypto-exchange/exchange/bitget"
 	"crypto-exchange/exchange/bybit"
-	"crypto-exchange/pkg/assets"
+	"crypto-exchange/exchange/strategy"
 
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -32,9 +32,9 @@ func main() {
 	binance_future := binance_future.New()
 	bitget := bitget.New()
 	_, _, _ = binance, bybit, binance_future
-	// exchange := strategy.New(binance, bybit, bitget)
-	// exchange.GetSingleCrossExchangeArbitrage("OGN")
+	exchange := strategy.New(binance_future, bybit, bitget)
+	exchange.GetCrossExchangeArbitrage()
 
-	assetsUsecase := assets.NewAssetsUsecase([]any{bybit, binance, binance_future, bitget})
-	assetsUsecase.GetAssets()
+	// assetsUsecase := assets.NewAssetsUsecase([]any{bybit, binance, binance_future, bitget})
+	// assetsUsecase.GetAssets()
 }

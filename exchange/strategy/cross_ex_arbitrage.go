@@ -2,22 +2,26 @@ package strategy
 
 type CrossExArbitrageInformation struct {
 	ExchangeName    string
-	LastPrice       float64
-	FundingRate     float64
-	NextFundingTime int64
+	Symbol          string
+	LastPrice       string
+	FundingRate     string
+	NextFundingTime string
 }
 
 type CrossExArbitrager interface {
-	GetCrossExArbitrageInformation(string) (*CrossExArbitrageInformation, error)
+	GetCrossExArbitrageInformation() (SymbolExchangeFundingPrice, error)
 }
 
-type CrossExArbitrageResult struct {
-	ExchangePair     string
-	PriceDiffPercent float64
-	FundingRateDiff  float64
-	NextFundingTime  string
+type FundingPriceDiff struct {
+	ExchangeBuy     string
+	ExchangeSell    string
+	PriceDiff       float64
+	FundingRateDiff float64
+	FundingTime     string
 }
+
+type SymbolFundingPriceDiffs map[string][]FundingPriceDiff
 
 type CrossExArbitrageUsecase interface {
-	CalculateCrossExArbitrage(string) ([]CrossExArbitrageResult, error)
+	CalculateCrossExArbitrage() (SymbolFundingPriceDiffs, error)
 }

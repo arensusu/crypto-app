@@ -21,14 +21,11 @@ func NewAssetsUsecase(clients []any) *AssetsUsecase {
 }
 
 func (u *AssetsUsecase) GetAssets() {
-	assets := []asset.Asset{}
 	for _, client := range u.Clients {
 		asset, err := client.GetAllAsset()
 		if err != nil {
 			panic(fmt.Errorf("get asset fail: %w", err))
 		}
-		assets = append(assets, asset...)
+		fmt.Println(asset)
 	}
-
-	fmt.Println(assets)
 }
