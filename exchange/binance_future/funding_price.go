@@ -2,11 +2,11 @@ package binance_future
 
 import (
 	"context"
-	"crypto-exchange/exchange/strategy"
+	"crypto-exchange/domain"
 	"strconv"
 )
 
-func (ex *BinanceFuture) GetCrossExArbitrageInformation() (strategy.SymbolExchangeFundingPrice, error) {
+func (ex *BinanceFuture) GetFundingAndPrices() (domain.FundingPricesOfSymbol, error) {
 	symbolPrices, err := ex.Client.NewListPricesService().Do(context.Background())
 	if err != nil {
 		return nil, err
@@ -17,9 +17,9 @@ func (ex *BinanceFuture) GetCrossExArbitrageInformation() (strategy.SymbolExchan
 		return nil, err
 	}
 
-	//results := []strategy.CrossExArbitrageInformation{}
+	//results := []domain.CrossExArbitrageInformation{}
 
-	results := strategy.SymbolExchangeFundingPrice{}
+	results := domain.FundingPricesOfSymbol{}
 	for _, symbolPrice := range symbolPrices {
 		results.Set(ex.Name, string(symbolPrice.Symbol), symbolPrice.Price, "0", "0")
 	}

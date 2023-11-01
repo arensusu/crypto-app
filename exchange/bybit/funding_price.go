@@ -2,12 +2,12 @@
 package bybit
 
 import (
-	"crypto-exchange/exchange/strategy"
+	"crypto-exchange/domain"
 
 	"github.com/hirokisan/bybit/v2"
 )
 
-func (ex *Bybit) GetCrossExArbitrageInformation() (strategy.SymbolExchangeFundingPrice, error) {
+func (ex *Bybit) GetFundingAndPrices() (domain.FundingPricesOfSymbol, error) {
 	param := bybit.V5GetTickersParam{
 		Category: bybit.CategoryV5Linear,
 	}
@@ -17,7 +17,7 @@ func (ex *Bybit) GetCrossExArbitrageInformation() (strategy.SymbolExchangeFundin
 		return nil, err
 	}
 
-	results := strategy.SymbolExchangeFundingPrice{}
+	results := domain.FundingPricesOfSymbol{}
 	for _, ticker := range tickers.Result.LinearInverse.List {
 		results.Set(ex.Name, string(ticker.Symbol), ticker.LastPrice, ticker.FundingRate, ticker.NextFundingTime)
 	}

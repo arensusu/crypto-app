@@ -1,4 +1,4 @@
-package asset
+package domain
 
 type Asset struct {
 	Coin   string

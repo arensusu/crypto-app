@@ -2,12 +2,12 @@ package binance
 
 import (
 	"context"
-	"crypto-exchange/exchange/asset"
+	"crypto-exchange/domain"
 	"strconv"
 )
 
-func (ex *Binance) GetAllAsset() ([]asset.Asset, error) {
-	assets := []asset.Asset{}
+func (ex *Binance) GetAllAsset() ([]domain.Asset, error) {
+	assets := []domain.Asset{}
 	res, err := ex.Client.NewGetUserAsset().Do(context.Background())
 	if err != nil {
 		return nil, err
@@ -24,7 +24,7 @@ func (ex *Binance) GetAllAsset() ([]asset.Asset, error) {
 			return nil, err
 		}
 
-		assets = append(assets, asset.Asset{
+		assets = append(assets, domain.Asset{
 			Coin:   record.Asset,
 			Amount: freeAmount + lockedAmount,
 		})

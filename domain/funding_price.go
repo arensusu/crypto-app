@@ -1,16 +1,12 @@
-package strategy
+package domain
 
 import (
 	"strconv"
 )
 
-type StrategyExecuter struct {
-	Exchanges []interface{}
-}
-
-func New(exchanges ...interface{}) *StrategyExecuter {
-	ex := &StrategyExecuter{Exchanges: exchanges}
-	return ex
+type GetFundingAndPricer interface {
+	GetFundingAndPrice(symbol string) (FundingPrice, error)
+	GetFundingAndPrices() (FundingPricesOfSymbol, error)
 }
 
 type FundingPrice struct {
@@ -20,9 +16,9 @@ type FundingPrice struct {
 	FundingTime int64
 }
 
-type SymbolExchangeFundingPrice map[string][]FundingPrice
+type FundingPricesOfSymbol map[string][]FundingPrice
 
-func (m SymbolExchangeFundingPrice) Set(exchange, symbol, price, fundingRate, fundingTime string) {
+func (m FundingPricesOfSymbol) Set(exchange, symbol, price, fundingRate, fundingTime string) {
 	if _, exist := m[symbol]; !exist {
 		m[symbol] = []FundingPrice{}
 	}
@@ -39,7 +35,7 @@ func (m SymbolExchangeFundingPrice) Set(exchange, symbol, price, fundingRate, fu
 	})
 }
 
-func (m SymbolExchangeFundingPrice) SetSpecial(exchange, symbol, fundingRate, fundingTime string) {
+func (m FundingPricesOfSymbol) SetSpecial(exchange, symbol, fundingRate, fundingTime string) {
 	fundingRateFloat64, _ := strconv.ParseFloat(fundingRate, 64)
 	fundingTimeInt64, _ := strconv.ParseInt(fundingTime, 10, 64)
 	if elem, ok := m[symbol]; ok {

@@ -1,18 +1,18 @@
 package assets
 
 import (
-	"crypto-exchange/exchange/asset"
+	"crypto-exchange/domain"
 	"fmt"
 )
 
 type AssetsUsecase struct {
-	Clients []asset.AssetGetter
+	Clients []domain.AssetGetter
 }
 
 func NewAssetsUsecase(clients []any) *AssetsUsecase {
-	assetGetters := []asset.AssetGetter{}
+	assetGetters := []domain.AssetGetter{}
 	for _, c := range clients {
-		if assetGetter, ok := c.(asset.AssetGetter); ok {
+		if assetGetter, ok := c.(domain.AssetGetter); ok {
 			assetGetters = append(assetGetters, assetGetter)
 		}
 	}

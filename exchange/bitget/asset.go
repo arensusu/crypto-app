@@ -1,12 +1,12 @@
 package bitget
 
 import (
-	"crypto-exchange/exchange/asset"
+	"crypto-exchange/domain"
 	"strconv"
 )
 
-func (ex *Bitget) GetAllAsset() (*asset.ExchangeAsset, error) {
-	assets := []asset.Asset{}
+func (ex *Bitget) GetAllAsset() (*domain.ExchangeAsset, error) {
+	assets := []domain.Asset{}
 
 	spotAssets, err := ex.GetSpotAssets()
 	if err != nil {
@@ -20,26 +20,26 @@ func (ex *Bitget) GetAllAsset() (*asset.ExchangeAsset, error) {
 	}
 	assets = append(assets, mixAssets...)
 
-	return &asset.ExchangeAsset{
+	return &domain.ExchangeAsset{
 		Name:   ex.Name,
 		Assets: assets,
 	}, nil
 }
 
-func (ex *Bitget) GetSpotAssets() ([]asset.Asset, error) {
+func (ex *Bitget) GetSpotAssets() ([]domain.Asset, error) {
 	spotRes, err := ex.Client.NewSpotAccountGetAccountAssetsLiteService().Do()
 	if err != nil {
 		return nil, err
 	}
 
-	assets := []asset.Asset{}
+	assets := []domain.Asset{}
 	for _, data := range spotRes.Data {
 		availabe, err := strconv.ParseFloat(data.Available, 64)
 		if err != nil {
 			return nil, err
 		}
 
-		assets = append(assets, asset.Asset{
+		assets = append(assets, domain.Asset{
 			Coin:   data.CoinName,
 			Amount: availabe,
 		})
@@ -48,20 +48,20 @@ func (ex *Bitget) GetSpotAssets() ([]asset.Asset, error) {
 	return assets, nil
 }
 
-func (ex *Bitget) GetMixAssets() ([]asset.Asset, error) {
+func (ex *Bitget) GetMixAssets() ([]domain.Asset, error) {
 	spotRes, err := ex.Client.NewMixAccountGetAccountListService().ProductType("umcbl").Do()
 	if err != nil {
 		return nil, err
 	}
 
-	assets := []asset.Asset{}
+	assets := []domain.Asset{}
 	for _, data := range spotRes.Data {
 		availabe, err := strconv.ParseFloat(data.Available, 64)
 		if err != nil {
 			return nil, err
 		}
 
-		assets = append(assets, asset.Asset{
+		assets = append(assets, domain.Asset{
 			Coin:   data.MarginCoin,
 			Amount: availabe,
 		})
