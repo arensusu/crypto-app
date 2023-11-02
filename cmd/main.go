@@ -5,6 +5,7 @@ import (
 	"crypto-exchange/exchange/binance_future"
 	"crypto-exchange/exchange/bitget"
 	"crypto-exchange/exchange/bybit"
+	"crypto-exchange/pkg/crossexchange"
 	"flag"
 	"fmt"
 
@@ -32,14 +33,14 @@ func main() {
 	flag.Parse()
 
 	bybit := bybit.New()
-	binance := binance.New()
+	_ = binance.New()
 	binance_future := binance_future.New()
 	bitget := bitget.New()
-	_, _, _ = binance, bybit, binance_future
-	exchange := NewExchanges(binance_future, bybit, bitget)
+	exs := []any{bybit, binance_future, bitget}
+	ss := crossexchange.NewCrossExchangeSingleSymbol(exs)
 
 	if *doCross != "" {
-		fmt.Println(exchange.GetCrossExchangeFundingPrice(*doCross))
+		fmt.Println(ss.Do(*doCross))
 	}
 
 	// assetsUsecase := assets.NewAssetsUsecase([]any{bybit, binance, binance_future, bitget})
