@@ -5,7 +5,7 @@ import (
 	"crypto-exchange/exchange/binance_future"
 	"crypto-exchange/exchange/bitget"
 	"crypto-exchange/exchange/bybit"
-	"crypto-exchange/pkg/cross"
+	"flag"
 
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -27,13 +27,18 @@ func main() {
 	// telegramHandler := telegram.NewTelegramHandler(tgbot, userUsecase, watchlistUsecase, fundingUsecase)
 
 	// go telegramHandler.Run()
-	bybit := bybit.New()
-	binance := binance.New()
-	binance_future := binance_future.New()
-	bitget := bitget.New()
-	_, _, _ = binance, bybit, binance_future
-	exchange := cross.New(binance_future, bybit, bitget)
-	exchange.GetCrossExchangeArbitrage()
+	doCross := flag.String("cross", "", "")
+	flag.Parse()
+
+	if *doCross != "" {
+		bybit := bybit.New()
+		binance := binance.New()
+		binance_future := binance_future.New()
+		bitget := bitget.New()
+		_, _, _ = binance, bybit, binance_future
+		exchange := NewStrategyExecuter(binance_future, bybit, bitget)
+		exchange.GetCrossExchangeFundingPrice(*doCross)
+	}
 
 	// assetsUsecase := assets.NewAssetsUsecase([]any{bybit, binance, binance_future, bitget})
 	// assetsUsecase.GetAssets()

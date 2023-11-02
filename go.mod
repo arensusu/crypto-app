@@ -4,7 +4,7 @@ go 1.21.1
 
 require (
 	github.com/adshao/go-binance/v2 v2.4.5
-	github.com/arensusu/bitget-golang-sdk-api v0.0.5
+	github.com/arensusu/bitget-golang-sdk-api v0.0.6
 	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/hirokisan/bybit/v2 v2.23.0
