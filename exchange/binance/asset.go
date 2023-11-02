@@ -2,7 +2,7 @@ package binance
 
 import (
 	"context"
-	"crypto-exchange/domain"
+	"crypto-exchange/exchange/domain"
 	"strconv"
 )
 

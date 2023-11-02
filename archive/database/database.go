@@ -1,7 +1,7 @@
 package database
 
 import (
-	"crypto-exchange/domain"
+	"crypto-exchange/exchange/domain"
 	"fmt"
 	"os"
 

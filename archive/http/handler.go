@@ -1,7 +1,7 @@
 package api
 
 import (
-	"crypto-exchange/domain"
+	"crypto-exchange/exchange/domain"
 	"encoding/json"
 	"log"
 	"net/http"

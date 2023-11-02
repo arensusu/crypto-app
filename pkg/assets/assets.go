@@ -1,7 +1,7 @@
 package assets
 
 import (
-	"crypto-exchange/domain"
+	"crypto-exchange/exchange/domain"
 	"fmt"
 )
 

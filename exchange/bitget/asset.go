@@ -1,7 +1,7 @@
 package bitget
 
 import (
-	"crypto-exchange/domain"
+	"crypto-exchange/exchange/domain"
 	"strconv"
 )
 

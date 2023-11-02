@@ -2,7 +2,7 @@ package pair
 
 import (
 	"crypto-exchange/coinglass"
-	"crypto-exchange/domain"
+	"crypto-exchange/exchange/domain"
 	"errors"
 	"fmt"
 

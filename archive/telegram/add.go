@@ -1,7 +1,7 @@
 package telegram
 
 import (
-	"crypto-exchange/domain"
+	"crypto-exchange/exchange/domain"
 	"fmt"
 	"log"
 	"strconv"

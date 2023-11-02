@@ -6,6 +6,7 @@ import (
 	"crypto-exchange/exchange/bitget"
 	"crypto-exchange/exchange/bybit"
 	"flag"
+	"fmt"
 
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -30,14 +31,15 @@ func main() {
 	doCross := flag.String("cross", "", "")
 	flag.Parse()
 
+	bybit := bybit.New()
+	binance := binance.New()
+	binance_future := binance_future.New()
+	bitget := bitget.New()
+	_, _, _ = binance, bybit, binance_future
+	exchange := NewExchanges(binance_future, bybit, bitget)
+
 	if *doCross != "" {
-		bybit := bybit.New()
-		binance := binance.New()
-		binance_future := binance_future.New()
-		bitget := bitget.New()
-		_, _, _ = binance, bybit, binance_future
-		exchange := NewStrategyExecuter(binance_future, bybit, bitget)
-		exchange.GetCrossExchangeFundingPrice(*doCross)
+		fmt.Println(exchange.GetCrossExchangeFundingPrice(*doCross))
 	}
 
 	// assetsUsecase := assets.NewAssetsUsecase([]any{bybit, binance, binance_future, bitget})

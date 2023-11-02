@@ -1,7 +1,7 @@
 package bybit
 
 import (
-	"crypto-exchange/domain"
+	"crypto-exchange/exchange/domain"
 	"strconv"
 
 	"github.com/hirokisan/bybit/v2"

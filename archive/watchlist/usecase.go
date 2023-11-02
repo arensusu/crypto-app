@@ -1,7 +1,7 @@
 package watchlist
 
 import (
-	"crypto-exchange/domain"
+	"crypto-exchange/exchange/domain"
 	"errors"
 	"fmt"
 )

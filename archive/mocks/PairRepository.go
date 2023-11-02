@@ -4,7 +4,7 @@ package mocks
 
 import (
 	coinglass "crypto-exchange/coinglass"
-	domain "crypto-exchange/domain"
+	domain "crypto-exchange/exchange/domain"
 
 	mock "github.com/stretchr/testify/mock"
 )

@@ -2,7 +2,7 @@ package binance_future
 
 import (
 	"context"
-	"crypto-exchange/domain"
+	"crypto-exchange/exchange/domain"
 	"strconv"
 )
 

@@ -1,7 +1,7 @@
 package bybit
 
 import (
-	"crypto-exchange/domain"
+	"crypto-exchange/exchange/domain"
 	"errors"
 	"strconv"
 	"time"

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"crypto-exchange/domain"
+	"crypto-exchange/exchange/domain"
 	"crypto-exchange/pkg/cross"
 	"fmt"
 	"log"
@@ -10,33 +10,23 @@ import (
 	"time"
 )
 
-type StrategyExecuter struct {
-	Exchanges []interface{}
-}
+type Exchanges []any
 
-func NewStrategyExecuter(exchanges ...interface{}) cross.CrossExchangeStrategy {
-	ex := &StrategyExecuter{Exchanges: exchanges}
+func NewExchanges(exchanges ...any) cross.CrossExchangeStrategy {
+	ex := Exchanges(exchanges)
 	return ex
 }
 
-type FundingPriceDiff struct {
-	ExchangeBuy     string
-	ExchangeSell    string
-	PriceDiff       float64
-	FundingRateDiff float64
-	FundingTime     string
-}
+type SymbolFundingPriceDiffs map[string][]cross.FundingPriceDiff
 
-type SymbolFundingPriceDiffs map[string][]FundingPriceDiff
-
-func (exs *StrategyExecuter) GetCrossExchangeFundingPrice(symbol string) {
+func (exs Exchanges) GetCrossExchangeFundingPrice(symbol string) (cross.SingleSymbolResult, error) {
 	fmt.Println(symbol)
 	wg := new(sync.WaitGroup)
-	wg.Add(len(exs.Exchanges))
+	wg.Add(len(exs))
 
 	lock := new(sync.Mutex)
 	raw := []*domain.FundingPrice{}
-	for _, ex := range exs.Exchanges {
+	for _, ex := range exs {
 		go func(ex any) {
 			defer wg.Done()
 			strat, ok := ex.(domain.GetFundingAndPricer)
@@ -56,50 +46,50 @@ func (exs *StrategyExecuter) GetCrossExchangeFundingPrice(symbol string) {
 	wg.Wait()
 
 	processed := calculateFundingPrices(raw)
-	fmt.Println(raw)
-	fmt.Println(processed)
+
+	return cross.SingleSymbolResult{Data: raw, Diff: processed}, nil
 }
 
-func (exs *StrategyExecuter) GetCrossExchangeArbitrage() {
-	//start := time.Now().UnixMilli()
+// func (exs *StrategyExecuter) GetCrossExchangeArbitrage() {
+// 	//start := time.Now().UnixMilli()
 
-	wg := new(sync.WaitGroup)
-	wg.Add(len(exs.Exchanges))
+// 	wg := new(sync.WaitGroup)
+// 	wg.Add(len(exs.Exchanges))
 
-	lock := new(sync.Mutex)
-	result := domain.FundingPricesOfSymbol{}
-	_ = result
-	for _, ex := range exs.Exchanges {
-		go func(ex any) {
-			defer wg.Done()
-			strat, ok := ex.(domain.GetFundingAndPricer)
-			if !ok {
-				log.Fatal(fmt.Errorf("type error: %v", ex))
-			}
+// 	lock := new(sync.Mutex)
+// 	result := domain.FundingPricesOfSymbol{}
+// 	_ = result
+// 	for _, ex := range exs.Exchanges {
+// 		go func(ex any) {
+// 			defer wg.Done()
+// 			strat, ok := ex.(domain.GetFundingAndPricer)
+// 			if !ok {
+// 				log.Fatal(fmt.Errorf("type error: %v", ex))
+// 			}
 
-			info, err := (strat).GetFundingAndPrices()
-			if err != nil {
-				log.Fatal(err)
-			}
-			lock.Lock()
-			for k, v := range info {
-				result[k] = append(result[k], v...)
-			}
-			lock.Unlock()
-		}(ex)
-	}
-	wg.Wait()
+// 			info, err := (strat).GetFundingAndPrices()
+// 			if err != nil {
+// 				log.Fatal(err)
+// 			}
+// 			lock.Lock()
+// 			for k, v := range info {
+// 				result[k] = append(result[k], v...)
+// 			}
+// 			lock.Unlock()
+// 		}(ex)
+// 	}
+// 	wg.Wait()
 
-	results := SymbolFundingPriceDiffs{}
-	for symbol, fundingPrices := range result {
+// 	results := SymbolFundingPriceDiffs{}
+// 	for symbol, fundingPrices := range result {
 
-		results[symbol] = calculateFundingPrices(fundingPrices)
-	}
-	fmt.Println(results["POLYXUSDT"])
-}
+// 		results[symbol] = calculateFundingPrices(fundingPrices)
+// 	}
+// 	fmt.Println(results["POLYXUSDT"])
+// }
 
-func calculateFundingPrices(fps []*domain.FundingPrice) []FundingPriceDiff {
-	diffs := []FundingPriceDiff{}
+func calculateFundingPrices(fps []*domain.FundingPrice) []cross.FundingPriceDiff {
+	diffs := []cross.FundingPriceDiff{}
 	for i := 0; i < len(fps); i += 1 {
 		for j := i + 1; j < len(fps); j += 1 {
 			diffs = append(diffs, getBestCrossExchangeBuySell(fps[i], fps[j]))
@@ -108,7 +98,7 @@ func calculateFundingPrices(fps []*domain.FundingPrice) []FundingPriceDiff {
 	return diffs
 }
 
-func getBestCrossExchangeBuySell(fpA, fpB *domain.FundingPrice) FundingPriceDiff {
+func getBestCrossExchangeBuySell(fpA, fpB *domain.FundingPrice) cross.FundingPriceDiff {
 	var buy, sell *domain.FundingPrice
 
 	if isFundingTimeNotTheSame(fpA, fpB) {
@@ -119,7 +109,7 @@ func getBestCrossExchangeBuySell(fpA, fpB *domain.FundingPrice) FundingPriceDiff
 		buy, sell = getBuySellByFundingRate(fpA, fpB)
 	}
 
-	diff := FundingPriceDiff{
+	diff := cross.FundingPriceDiff{
 		ExchangeBuy:     buy.Exchange,
 		ExchangeSell:    sell.Exchange,
 		PriceDiff:       buy.Price / sell.Price,

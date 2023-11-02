@@ -1,7 +1,7 @@
 package pair
 
 import (
-	"crypto-exchange/domain"
+	"crypto-exchange/exchange/domain"
 	"fmt"
 	"math"
 	"time"
