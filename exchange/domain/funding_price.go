@@ -10,10 +10,10 @@ type GetFundingAndPricer interface {
 }
 
 type FundingPrice struct {
-	Exchange    string
-	Price       float64
-	FundingRate float64
-	FundingTime int64
+	Exchange    string  `json:"exchange"`
+	Price       float64 `json:"price"`
+	FundingRate float64 `json:"fundingRate"`
+	FundingTime int64   `json:"fundingTime"`
 }
 
 type FundingPricesOfSymbol map[string][]*FundingPrice

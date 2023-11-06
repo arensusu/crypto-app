@@ -1,14 +1,16 @@
 package main
 
 import (
+	"crypto-exchange/api"
 	"crypto-exchange/exchange/binance"
 	"crypto-exchange/exchange/binance_future"
 	"crypto-exchange/exchange/bitget"
 	"crypto-exchange/exchange/bybit"
 	"crypto-exchange/pkg/crossexchange"
-	"flag"
-	"fmt"
+	"log"
+	"net/http"
 
+	"github.com/gorilla/mux"
 	_ "github.com/joho/godotenv/autoload"
 )
 
@@ -29,8 +31,6 @@ func main() {
 	// telegramHandler := telegram.NewTelegramHandler(tgbot, userUsecase, watchlistUsecase, fundingUsecase)
 
 	// go telegramHandler.Run()
-	doCross := flag.String("cross", "", "")
-	flag.Parse()
 
 	bybit := bybit.New()
 	_ = binance.New()
@@ -39,10 +39,9 @@ func main() {
 	exs := []any{bybit, binance_future, bitget}
 	ss := crossexchange.NewCrossExchangeSingleSymbol(exs)
 
-	if *doCross != "" {
-		fmt.Println(ss.Do(*doCross))
-	}
-
+	router := mux.NewRouter()
+	api.NewCrossExchangeServer(router, ss)
+	log.Fatal(http.ListenAndServe("0.0.0.0:8080", router))
 	// assetsUsecase := assets.NewAssetsUsecase([]any{bybit, binance, binance_future, bitget})
 	// assetsUsecase.GetAssets()
 }

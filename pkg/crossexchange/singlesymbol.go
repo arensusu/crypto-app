@@ -33,14 +33,14 @@ type FundingPriceDiff struct {
 func (c *CrossExchangeSingleSymbol) Do(symbol string) SingleSymbolResult {
 	fmt.Println(symbol)
 
-	raw, errs := c.getExchangeData(symbol)
+	raw, errs := c.GetExchangeData(symbol)
 
 	processed := calculateFundingPrices(raw)
 
 	return SingleSymbolResult{Data: raw, Diff: processed, Errors: errs}
 }
 
-func (c *CrossExchangeSingleSymbol) getExchangeData(symbol string) ([]domain.FundingPrice, []error) {
+func (c *CrossExchangeSingleSymbol) GetExchangeData(symbol string) ([]domain.FundingPrice, []error) {
 	wg := new(sync.WaitGroup)
 	wg.Add(len(c.Exchanges))
 
