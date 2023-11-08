@@ -20,10 +20,7 @@ func NewCrossExchangeServer(r *mux.Router, exchange *crossexchange.CrossExchange
 func (s *CrossExchangeServer) GetExchangeData(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
-	data, err := s.exchange.GetExchangeData(params["symbol"])
-	if err != nil {
-		ResponseWithJson(w, http.StatusOK, map[string]string{"error": "get data failed"})
-	}
+	data := s.exchange.GetExchangeData(params["symbol"])
 
 	ResponseWithJson(w, http.StatusOK, data)
 }

@@ -21,7 +21,7 @@ func (ex *Bitget) GetAllAsset() (*domain.ExchangeAsset, error) {
 	assets = append(assets, mixAssets...)
 
 	return &domain.ExchangeAsset{
-		Name:   ex.Name,
+		Name:   ex.Name(),
 		Assets: assets,
 	}, nil
 }

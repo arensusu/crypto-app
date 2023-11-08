@@ -25,7 +25,7 @@ func (ex *BinanceFuture) GetAllAsset() (*domain.ExchangeAsset, error) {
 	}
 
 	return &domain.ExchangeAsset{
-		Name:   ex.Name,
+		Name:   ex.Name(),
 		Assets: assets,
 	}, nil
 }

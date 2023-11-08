@@ -2,19 +2,18 @@
 package bybit
 
 import (
+	"crypto-exchange/exchange"
 	"os"
 
 	"github.com/hirokisan/bybit/v2"
 )
 
 type Bybit struct {
-	Name   string
 	Client *bybit.Client
 }
 
-func New() *Bybit {
-	return &Bybit{
-		Name:   "Bybit",
-		Client: bybit.NewClient().WithAuth(os.Getenv("BYBIT_API_KEY"), os.Getenv("BYBIT_API_SECRET")),
-	}
+func New() exchange.Exchange {
+	return &Bybit{Client: bybit.NewClient().WithAuth(os.Getenv("BYBIT_API_KEY"), os.Getenv("BYBIT_API_SECRET"))}
 }
+
+func (ex *Bybit) Name() string { return "Bybit" }

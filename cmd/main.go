@@ -36,8 +36,7 @@ func main() {
 	_ = binance.New()
 	binance_future := binance_future.New()
 	bitget := bitget.New()
-	exs := []any{bybit, binance_future, bitget}
-	ss := crossexchange.NewCrossExchangeSingleSymbol(exs)
+	ss := crossexchange.NewCrossExchangeSingleSymbol(bybit, binance_future, bitget)
 
 	router := mux.NewRouter()
 	api.NewCrossExchangeServer(router, ss)

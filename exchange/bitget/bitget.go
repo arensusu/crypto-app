@@ -2,18 +2,17 @@
 package bitget
 
 import (
+	"crypto-exchange/exchange"
+
 	"github.com/arensusu/bitget-golang-sdk-api"
 )
 
 type Bitget struct {
-	Name   string
 	Client *bitget.Client
 }
 
-func New() *Bitget {
-	client := bitget.NewClient()
-	return &Bitget{
-		Name:   "Bitget",
-		Client: client,
-	}
+func New() exchange.Exchange {
+	return &Bitget{Client: bitget.NewClient()}
 }
+
+func (ex *Bitget) Name() string { return "Bitget" }

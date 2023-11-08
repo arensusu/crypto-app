@@ -2,11 +2,10 @@
 package bitget
 
 import (
-	"crypto-exchange/exchange/domain"
-	"strings"
+	"crypto-exchange/exchange/types"
 )
 
-func (ex *Bitget) GetFundingAndPrice(symbol string) (*domain.FundingPrice, error) {
+func (ex *Bitget) GetFundingAndPrice(symbol string) (*types.FundingFeeArbitrage, error) {
 	bitgetSymbol := symbol + "_UMCBL"
 	tickerRes, err := ex.Client.MixMarket().GetTicker(bitgetSymbol)
 	if err != nil {
@@ -21,20 +20,14 @@ func (ex *Bitget) GetFundingAndPrice(symbol string) (*domain.FundingPrice, error
 	ticker := tickerRes.Data
 	fundingTime := fundingTimeRes.Data
 
-	result := domain.NewFundingPrice(ex.Name, ticker.Last, ticker.FundingRate, fundingTime.FundingTime)
+	result := &types.FundingFeeArbitrage{
+		LastPrice:   ticker.Last,
+		FundingRate: ticker.FundingRate,
+		FundingTime: fundingTime.FundingTime,
+		Bid1Price:   ticker.BestBid,
+		Bid1Size:    ticker.BidSz,
+		Ask1Price:   ticker.BestAsk,
+		Ask1Size:    ticker.AskSz,
+	}
 	return result, nil
-}
-
-func (ex *Bitget) GetFundingAndPrices() (domain.FundingPricesOfSymbol, error) {
-	tickers, err := ex.Client.MixMarket().GetTickers("umcbl")
-	if err != nil {
-		return nil, err
-	}
-
-	results := domain.FundingPricesOfSymbol{}
-	for _, ticker := range tickers.Data {
-		results.Set(ex.Name, strings.TrimSuffix(ticker.Symbol, "_UMCBL"), ticker.Last, ticker.FundingRate, "0")
-	}
-
-	return results, nil
 }

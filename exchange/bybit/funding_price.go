@@ -2,13 +2,13 @@
 package bybit
 
 import (
-	"crypto-exchange/exchange/domain"
+	"crypto-exchange/exchange/types"
 	"errors"
 
 	"github.com/hirokisan/bybit/v2"
 )
 
-func (ex *Bybit) GetFundingAndPrice(symbol string) (*domain.FundingPrice, error) {
+func (ex *Bybit) GetFundingAndPrice(symbol string) (*types.FundingFeeArbitrage, error) {
 	param := bybit.V5GetTickersParam{
 		Category: bybit.CategoryV5Linear,
 		Symbol:   (*bybit.SymbolV5)(&symbol),
@@ -26,25 +26,15 @@ func (ex *Bybit) GetFundingAndPrice(symbol string) (*domain.FundingPrice, error)
 
 	ticker := tickers[0]
 
-	result := domain.NewFundingPrice(ex.Name, ticker.LastPrice, ticker.FundingRate, ticker.NextFundingTime)
+	result := &types.FundingFeeArbitrage{
+		LastPrice:   ticker.LastPrice,
+		FundingRate: ticker.FundingRate,
+		FundingTime: ticker.NextFundingTime,
+		Bid1Price:   ticker.Bid1Price,
+		Bid1Size:    ticker.Bid1Size,
+		Ask1Price:   ticker.Ask1Price,
+		Ask1Size:    ticker.Ask1Size,
+	}
 
 	return result, nil
-}
-
-func (ex *Bybit) GetFundingAndPrices() (domain.FundingPricesOfSymbol, error) {
-	param := bybit.V5GetTickersParam{
-		Category: bybit.CategoryV5Linear,
-	}
-	tickers, err := ex.Client.V5().Market().GetTickers(param)
-
-	if err != nil {
-		return nil, err
-	}
-
-	results := domain.FundingPricesOfSymbol{}
-	for _, ticker := range tickers.Result.LinearInverse.List {
-		results.Set(ex.Name, string(ticker.Symbol), ticker.LastPrice, ticker.FundingRate, ticker.NextFundingTime)
-	}
-
-	return results, nil
 }
