@@ -6,4 +6,5 @@ type Exchange interface {
 	Name() string
 
 	GetFundingAndPrice(symbol string) (*types.FundingFeeArbitrage, error)
+	GetAssets() ([]types.Asset, error)
 }

@@ -2,12 +2,12 @@ package binance_future
 
 import (
 	"context"
-	"crypto-exchange/exchange/domain"
+	"crypto-exchange/exchange/types"
 	"strconv"
 )
 
-func (ex *BinanceFuture) GetAllAsset() (*domain.ExchangeAsset, error) {
-	assets := []domain.Asset{}
+func (ex *BinanceFuture) GetAssets() ([]types.Asset, error) {
+	assets := []types.Asset{}
 	res, err := ex.Client.NewGetBalanceService().Do(context.Background())
 	if err != nil {
 		return nil, err
@@ -18,14 +18,11 @@ func (ex *BinanceFuture) GetAllAsset() (*domain.ExchangeAsset, error) {
 		if err != nil {
 			return nil, err
 		}
-		assets = append(assets, domain.Asset{
+		assets = append(assets, types.Asset{
 			Coin:   record.Asset,
 			Amount: amount,
 		})
 	}
 
-	return &domain.ExchangeAsset{
-		Name:   ex.Name(),
-		Assets: assets,
-	}, nil
+	return assets, nil
 }

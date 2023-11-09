@@ -4,23 +4,23 @@ import (
 	"crypto-exchange/pkg/crossexchange"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 )
 
 type CrossExchangeServer struct {
 	exchange *crossexchange.CrossExchangeSingleSymbol
 }
 
-func NewCrossExchangeServer(r *mux.Router, exchange *crossexchange.CrossExchangeSingleSymbol) {
+func NewCrossExchangeServer(r *gin.Engine, exchange *crossexchange.CrossExchangeSingleSymbol) {
 	server := &CrossExchangeServer{exchange: exchange}
-	r.HandleFunc("/crossexchange/{symbol}", server.GetExchangeData).Methods("GET")
+	r.GET("/crossexchange/:symbol", server.GetExchangeData)
 
 }
 
-func (s *CrossExchangeServer) GetExchangeData(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
+func (s *CrossExchangeServer) GetExchangeData(c *gin.Context) {
+	symbol := c.Param("symbol")
 
-	data := s.exchange.GetExchangeData(params["symbol"])
+	data := s.exchange.GetExchangeData(symbol)
 
-	ResponseWithJson(w, http.StatusOK, data)
+	c.JSON(http.StatusOK, data)
 }

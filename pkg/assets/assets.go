@@ -1,31 +1,28 @@
 package assets
 
 import (
-	"crypto-exchange/exchange/domain"
+	"crypto-exchange/exchange"
+	"crypto-exchange/exchange/types"
 	"fmt"
 )
 
-type AssetsUsecase struct {
-	Clients []domain.AssetGetter
+type AssetsFinder struct {
+	Exchanges []exchange.Exchange
 }
 
-func NewAssetsUsecase(clients []any) *AssetsUsecase {
-	assetGetters := []domain.AssetGetter{}
-	for _, c := range clients {
-		if assetGetter, ok := c.(domain.AssetGetter); ok {
-			assetGetters = append(assetGetters, assetGetter)
-		}
-	}
-
-	return &AssetsUsecase{Clients: assetGetters}
+func NewAssetsFinder(exchanges ...exchange.Exchange) *AssetsFinder {
+	return &AssetsFinder{Exchanges: exchanges}
 }
 
-func (u *AssetsUsecase) GetAssets() {
-	for _, client := range u.Clients {
-		asset, err := client.GetAllAsset()
+func (f *AssetsFinder) GetAssets() map[string][]types.Asset {
+	assets := map[string][]types.Asset{}
+	for _, ex := range f.Exchanges {
+		asset, err := ex.GetAssets()
 		if err != nil {
-			panic(fmt.Errorf("get asset fail: %w", err))
+			fmt.Println(fmt.Errorf("get asset fail: %w", err))
+			continue
 		}
-		fmt.Println(asset)
+		assets[ex.Name()] = asset
 	}
+	return assets
 }

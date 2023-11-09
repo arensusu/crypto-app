@@ -18,4 +18,4 @@ func New() *BinanceFuture {
 	return &BinanceFuture{Client: futureClient}
 }
 
-func (ex *BinanceFuture) Name() string { return "Binance" }
+func (ex *BinanceFuture) Name() string { return "BinanceFuture" }

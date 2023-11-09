@@ -6,11 +6,12 @@ import (
 	"crypto-exchange/exchange/binance_future"
 	"crypto-exchange/exchange/bitget"
 	"crypto-exchange/exchange/bybit"
+	"crypto-exchange/pkg/assets"
 	"crypto-exchange/pkg/crossexchange"
 	"log"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 	_ "github.com/joho/godotenv/autoload"
 )
 
@@ -33,13 +34,15 @@ func main() {
 	// go telegramHandler.Run()
 
 	bybit := bybit.New()
-	_ = binance.New()
+	binance := binance.New()
 	binance_future := binance_future.New()
 	bitget := bitget.New()
 	ss := crossexchange.NewCrossExchangeSingleSymbol(bybit, binance_future, bitget)
+	asset := assets.NewAssetsFinder(bybit, binance, binance_future, bitget)
 
-	router := mux.NewRouter()
+	router := gin.Default()
 	api.NewCrossExchangeServer(router, ss)
+	api.NewAssetsServer(router, asset)
 	log.Fatal(http.ListenAndServe("0.0.0.0:8080", router))
 	// assetsUsecase := assets.NewAssetsUsecase([]any{bybit, binance, binance_future, bitget})
 	// assetsUsecase.GetAssets()
