@@ -1,5 +1,0 @@
-funding: get the funding rate history of pair
-perp: get the perpetual data of pair
-show: show the watchlist of pair
-add: add a pair into watchlist
-remove: remove a pair from watchlist

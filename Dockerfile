@@ -1,9 +1,9 @@
 FROM golang
 
-WORKDIR /crypto-tgbot
+WORKDIR /crypto-app
 
 COPY . .
 
-RUN go build -o crypto-tgbot cmd/main.go
+RUN go build -o crypto-app cmd/main.go
 
-CMD ["./crypto-tgbot"]
+CMD ["./crypto-app"]
