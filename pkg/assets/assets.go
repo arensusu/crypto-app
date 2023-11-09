@@ -1,9 +1,10 @@
 package assets
 
 import (
-	"crypto-exchange/exchange"
-	"crypto-exchange/exchange/types"
 	"fmt"
+
+	"github.com/arensusu/crypto-app/exchange"
+	"github.com/arensusu/crypto-app/exchange/types"
 )
 
 type AssetsFinder struct {

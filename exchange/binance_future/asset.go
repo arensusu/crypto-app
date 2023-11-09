@@ -2,8 +2,9 @@ package binance_future
 
 import (
 	"context"
-	"crypto-exchange/exchange/types"
 	"strconv"
+
+	"github.com/arensusu/crypto-app/exchange/types"
 )
 
 func (ex *BinanceFuture) GetAssets() ([]types.Asset, error) {

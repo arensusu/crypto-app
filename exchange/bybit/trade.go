@@ -1,10 +1,11 @@
 package bybit
 
 import (
-	"crypto-exchange/exchange/domain"
 	"errors"
 	"strconv"
 	"time"
+
+	"github.com/arensusu/crypto-app/exchange/domain"
 
 	"github.com/hirokisan/bybit/v2"
 )

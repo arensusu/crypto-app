@@ -2,9 +2,10 @@ package binance_future
 
 import (
 	"context"
-	"crypto-exchange/exchange/types"
 	"errors"
 	"strconv"
+
+	"github.com/arensusu/crypto-app/exchange/types"
 )
 
 func (ex *BinanceFuture) GetFundingAndPrice(symbol string) (*types.FundingFeeArbitrage, error) {

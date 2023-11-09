@@ -1,6 +1,6 @@
 package exchange
 
-import "crypto-exchange/exchange/types"
+import "github.com/arensusu/crypto-app/exchange/types"
 
 type Exchange interface {
 	Name() string

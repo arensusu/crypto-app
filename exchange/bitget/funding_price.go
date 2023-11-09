@@ -2,7 +2,7 @@
 package bitget
 
 import (
-	"crypto-exchange/exchange/types"
+	"github.com/arensusu/crypto-app/exchange/types"
 )
 
 func (ex *Bitget) GetFundingAndPrice(symbol string) (*types.FundingFeeArbitrage, error) {

@@ -1,8 +1,9 @@
 package bitget
 
 import (
-	"crypto-exchange/exchange/types"
 	"strconv"
+
+	"github.com/arensusu/crypto-app/exchange/types"
 )
 
 func (ex *Bitget) GetAssets() ([]types.Asset, error) {

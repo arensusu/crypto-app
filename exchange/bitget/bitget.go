@@ -2,7 +2,7 @@
 package bitget
 
 import (
-	"crypto-exchange/exchange"
+	"github.com/arensusu/crypto-app/exchange"
 
 	"github.com/arensusu/bitget-golang-sdk-api"
 )

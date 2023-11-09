@@ -2,10 +2,11 @@
 package binance
 
 import (
-	"crypto-exchange/exchange"
-	"crypto-exchange/exchange/types"
 	"fmt"
 	"os"
+
+	"github.com/arensusu/crypto-app/exchange"
+	"github.com/arensusu/crypto-app/exchange/types"
 
 	"github.com/adshao/go-binance/v2"
 )

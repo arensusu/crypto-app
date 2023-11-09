@@ -1,9 +1,10 @@
 package crossexchange
 
 import (
-	"crypto-exchange/exchange"
-	"crypto-exchange/exchange/types"
 	"sync"
+
+	"github.com/arensusu/crypto-app/exchange"
+	"github.com/arensusu/crypto-app/exchange/types"
 )
 
 type CrossExchangeSingleSymbol struct {

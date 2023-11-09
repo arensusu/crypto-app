@@ -1,8 +1,9 @@
 package api
 
 import (
-	"crypto-exchange/pkg/crossexchange"
 	"net/http"
+
+	"github.com/arensusu/crypto-app/pkg/crossexchange"
 
 	"github.com/gin-gonic/gin"
 )

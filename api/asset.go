@@ -1,8 +1,9 @@
 package api
 
 import (
-	"crypto-exchange/pkg/assets"
 	"net/http"
+
+	"github.com/arensusu/crypto-app/pkg/assets"
 
 	"github.com/gin-gonic/gin"
 )

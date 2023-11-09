@@ -1,15 +1,16 @@
 package main
 
 import (
-	"crypto-exchange/api"
-	"crypto-exchange/exchange/binance"
-	"crypto-exchange/exchange/binance_future"
-	"crypto-exchange/exchange/bitget"
-	"crypto-exchange/exchange/bybit"
-	"crypto-exchange/pkg/assets"
-	"crypto-exchange/pkg/crossexchange"
 	"log"
 	"net/http"
+
+	"github.com/arensusu/crypto-app/api"
+	"github.com/arensusu/crypto-app/exchange/binance"
+	"github.com/arensusu/crypto-app/exchange/binance_future"
+	"github.com/arensusu/crypto-app/exchange/bitget"
+	"github.com/arensusu/crypto-app/exchange/bybit"
+	"github.com/arensusu/crypto-app/pkg/assets"
+	"github.com/arensusu/crypto-app/pkg/crossexchange"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/joho/godotenv/autoload"

@@ -1,8 +1,9 @@
 package bybit
 
 import (
-	"crypto-exchange/exchange/types"
 	"strconv"
+
+	"github.com/arensusu/crypto-app/exchange/types"
 
 	"github.com/hirokisan/bybit/v2"
 )
